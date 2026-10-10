@@ -1,0 +1,147 @@
+version: 1
+approval: CKAD requested 2026-10-11; established reading-only scope
+course:
+  id: ATS028
+  certification:
+    name: Certified Kubernetes Application Developer
+    code: CKAD
+    provider: CNCF / Linux Foundation
+    domain: Application Observability and Maintenance
+    weight: 15
+    competencies:
+    - Understand API deprecations
+    - Implement probes and health checks
+    - Use built-in CLI tools to monitor Kubernetes applications
+    - Utilize container logs
+    - Debugging in Kubernetes
+defaults:
+  playground: false
+  module_lab: false
+  capstone: false
+  section_quiz: true
+  final_quiz: true
+assessment_format: YAML question banks, schema version 1; indexed in assessments/index.yaml
+sections:
+- id: section-010
+  title: Understand API deprecations
+  curriculum_item: Understand API deprecations
+  capstone: false
+  section_quiz: true
+  modules:
+  - id: module-01
+    title: API Discovery And Safe Definition Migration
+    objectives:
+    - Distinguish deprecation from endpoint removal.
+    - Discover served groups, versions and resources.
+    - Preserve behavior while changing a resource schema.
+    - Distinguish API support, validation and permission errors.
+    outline:
+    - Recognizing Deprecated APIs And Migrating Definitions
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+      adapted_from: null
+- id: section-020
+  title: Implement probes and health checks
+  curriculum_item: Implement probes and health checks
+  capstone: false
+  section_quiz: true
+  modules:
+  - id: module-01
+    title: Health Checks With Different Recovery Actions
+    objectives:
+    - Distinguish startup, readiness and liveness actions.
+    - Choose a meaningful supported probe type.
+    - Evaluate thresholds and expected initialization time.
+    - Diagnose restarts separately from missing ready endpoints.
+    outline:
+    - Designing Startup, Readiness And Liveness Checks
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
+      adapted_from: null
+- id: section-030
+  title: Use built-in CLI tools to monitor Kubernetes applications
+  curriculum_item: Use built-in CLI tools to monitor Kubernetes applications
+  capstone: false
+  section_quiz: true
+  modules:
+  - id: module-01
+    title: Built-In Inspection And Resource Metrics
+    objectives:
+    - Identify cluster, namespace and identity context.
+    - Compare desired specification, status and events.
+    - Distinguish resource usage from declared allocation.
+    - Choose diagnostic commands for the observed lifecycle stage.
+    outline:
+    - Choosing Diagnostic Evidence With kubectl
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
+      adapted_from: null
+- id: section-040
+  title: Utilize container logs
+  curriculum_item: Utilize container logs
+  capstone: false
+  section_quiz: true
+  modules:
+  - id: module-01
+    title: Container Logs And Lifecycle Evidence
+    objectives:
+    - Explain process output and container log retrieval.
+    - Select the relevant container and previous instance.
+    - Correlate records with version and observation time.
+    - Distinguish log evidence from startup events and infrastructure errors.
+    outline:
+    - Logs, Exits And Crash Loops
+    - Selecting The Right Container Log And Time Window
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-040/module-01/course-01-logs-exits-and-crash-loops.md
+      adapted_from: ATS039/sections/section-020/module-01/course-01-logs-exits-and-crash-loops.md
+    - reading: sections/section-040/module-01/course-02-selecting-the-right-container-log-and-time-window.md
+      adapted_from: null
+- id: section-050
+  title: Debugging in Kubernetes
+  curriculum_item: Debugging in Kubernetes
+  capstone: false
+  section_quiz: true
+  modules:
+  - id: module-01
+    title: Placement And Container Preparation Diagnosis
+    objectives:
+    - Distinguish unscheduled work from container preparation.
+    - Interpret placement constraints and declared capacity.
+    - Diagnose registry, mount and startup dependencies.
+    - Choose corrections at the failing lifecycle stage.
+    outline:
+    - Placement And Dependency Evidence
+    - Image Preparation And Container Startup
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-050/module-01/course-01-placement-and-dependency-evidence.md
+      adapted_from: ATS038/sections/section-030/module-01/course-01-placement-and-dependency-evidence.md
+    - reading: sections/section-050/module-01/course-02-image-preparation-and-container-startup.md
+      adapted_from: ATS038/sections/section-030/module-01/course-02-image-preparation-and-container-startup.md
+  - id: module-02
+    title: Application Dependencies And Focused Correction
+    objectives:
+    - Trace a request through application dependencies.
+    - Distinguish configuration, identity and network failures.
+    - Compare process health with useful request behavior.
+    - Select a focused correction and verify the intended result.
+    outline:
+    - Configuration, Dependencies And Request Failures
+    - Tracing A Service Request
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-050/module-02/course-01-configuration-dependencies-and-request-failures.md
+      adapted_from: ATS039/sections/section-020/module-01/course-02-configuration-dependencies-and-request-failures.md
+    - reading: sections/section-050/module-02/course-02-tracing-a-service-request.md
+      adapted_from: ATS038/sections/section-030/module-02/course-02-tracing-a-service-request.md
