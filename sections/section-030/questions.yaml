@@ -11,7 +11,7 @@ scope:
   title: Use built-in CLI tools to monitor Kubernetes applications
 placement:
   position: after
-  reading: sections/section-030/module-01/course-02-summary.md
+  reading: sections/section-030/module-01/course-03-summary.md
 questions:
 - id: ats028-section-030-q01
   type: single_choice

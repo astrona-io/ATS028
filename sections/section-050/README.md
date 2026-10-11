@@ -19,3 +19,5 @@ Each module begins with its goals and ends with a summary. Reusable YAML knowled
 - Distinguish configuration, identity and network failures.
 - Compare process health with useful request behavior.
 - Select a focused correction and verify the intended result.
+
+Each module pairs its concept readings with a guided practical sequence in an isolated playground. Finish the practice and closing summary before moving on. The YAML knowledge checks remain separate from the environment lifecycle.

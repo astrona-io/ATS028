@@ -1,5 +1,5 @@
 version: 1
-approval: CKAD requested 2026-10-11; established reading-only scope
+approval: CKAD playgrounds and guided practice requested 2026-10-12; no new graded labs.
 course:
   id: ATS028
   certification:
@@ -15,7 +15,7 @@ course:
     - Utilize container logs
     - Debugging in Kubernetes
 defaults:
-  playground: false
+  playground: true
   module_lab: false
   capstone: false
   section_quiz: true
@@ -37,11 +37,16 @@ sections:
     - Distinguish API support, validation and permission errors.
     outline:
     - Recognizing Deprecated APIs And Migrating Definitions
-    playground: false
+    - Discover A Served API And Reject A Removed Definition
+    playground: true
     module_lab: false
     sources:
     - reading: sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
       adapted_from: null
+    - reading: sections/section-010/module-01/course-02-guided-practice.md
+      adapted_from: null
+    practice_readings:
+    - sections/section-010/module-01/course-02-guided-practice.md
 - id: section-020
   title: Implement probes and health checks
   curriculum_item: Implement probes and health checks
@@ -57,11 +62,16 @@ sections:
     - Diagnose restarts separately from missing ready endpoints.
     outline:
     - Designing Startup, Readiness And Liveness Checks
-    playground: false
+    - Distinguish Readiness Removal From Liveness Restart
+    playground: true
     module_lab: false
     sources:
     - reading: sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
       adapted_from: null
+    - reading: sections/section-020/module-01/course-02-guided-practice.md
+      adapted_from: null
+    practice_readings:
+    - sections/section-020/module-01/course-02-guided-practice.md
 - id: section-030
   title: Use built-in CLI tools to monitor Kubernetes applications
   curriculum_item: Use built-in CLI tools to monitor Kubernetes applications
@@ -77,11 +87,16 @@ sections:
     - Choose diagnostic commands for the observed lifecycle stage.
     outline:
     - Choosing Diagnostic Evidence With kubectl
-    playground: false
+    - Combine Resource Status, Events And Live Metrics
+    playground: true
     module_lab: false
     sources:
     - reading: sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
       adapted_from: null
+    - reading: sections/section-030/module-01/course-02-guided-practice.md
+      adapted_from: null
+    practice_readings:
+    - sections/section-030/module-01/course-02-guided-practice.md
 - id: section-040
   title: Utilize container logs
   curriculum_item: Utilize container logs
@@ -98,13 +113,18 @@ sections:
     outline:
     - Logs, Exits And Crash Loops
     - Selecting The Right Container Log And Time Window
-    playground: false
+    - Read Current And Previous Container Logs
+    playground: true
     module_lab: false
     sources:
     - reading: sections/section-040/module-01/course-01-logs-exits-and-crash-loops.md
       adapted_from: ATS039/sections/section-020/module-01/course-01-logs-exits-and-crash-loops.md
     - reading: sections/section-040/module-01/course-02-selecting-the-right-container-log-and-time-window.md
       adapted_from: null
+    - reading: sections/section-040/module-01/course-03-guided-practice.md
+      adapted_from: null
+    practice_readings:
+    - sections/section-040/module-01/course-03-guided-practice.md
 - id: section-050
   title: Debugging in Kubernetes
   curriculum_item: Debugging in Kubernetes
@@ -121,13 +141,18 @@ sections:
     outline:
     - Placement And Dependency Evidence
     - Image Preparation And Container Startup
-    playground: false
+    - Locate Pending Placement And Repair A Node Selector
+    playground: true
     module_lab: false
     sources:
     - reading: sections/section-050/module-01/course-01-placement-and-dependency-evidence.md
       adapted_from: ATS038/sections/section-030/module-01/course-01-placement-and-dependency-evidence.md
     - reading: sections/section-050/module-01/course-02-image-preparation-and-container-startup.md
       adapted_from: ATS038/sections/section-030/module-01/course-02-image-preparation-and-container-startup.md
+    - reading: sections/section-050/module-01/course-03-guided-practice.md
+      adapted_from: null
+    practice_readings:
+    - sections/section-050/module-01/course-03-guided-practice.md
   - id: module-02
     title: Application Dependencies And Focused Correction
     objectives:
@@ -138,10 +163,15 @@ sections:
     outline:
     - Configuration, Dependencies And Request Failures
     - Tracing A Service Request
-    playground: false
+    - Repair A Missing Configuration Dependency
+    playground: true
     module_lab: false
     sources:
     - reading: sections/section-050/module-02/course-01-configuration-dependencies-and-request-failures.md
       adapted_from: ATS039/sections/section-020/module-01/course-02-configuration-dependencies-and-request-failures.md
     - reading: sections/section-050/module-02/course-02-tracing-a-service-request.md
       adapted_from: ATS038/sections/section-030/module-02/course-02-tracing-a-service-request.md
+    - reading: sections/section-050/module-02/course-03-guided-practice.md
+      adapted_from: null
+    practice_readings:
+    - sections/section-050/module-02/course-03-guided-practice.md
