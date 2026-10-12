@@ -9,6 +9,9 @@ This section covers utilize container logs. You will study Container Logs And Li
 
 Each module begins with its goals and ends with a summary. Reusable YAML knowledge checks follow the section summary and are registered separately for future presentation.
 
+
+You will identify the Pod, container, execution instance and time window behind a log record. Correlate messages with termination state rather than treating retry delay as the cause. Missing local history and confidential data handling also constrain what can be collected safely.
+
 ## Learning Outcomes
 
 - Explain process output and container log retrieval.
