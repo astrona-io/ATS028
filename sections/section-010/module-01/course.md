@@ -5,7 +5,7 @@ exam_objectives:
 ---
 # API Discovery And Safe Definition Migration
 
-This module connects intended application behavior to declared resources and observed conditions.
+An old Deployment definition fails after a cluster upgrade, while the running application still exists. The failed submission and the stored workload describe different things. Discover the served interface before deciding that the application was deleted.
 
 ## Learning Goals
 

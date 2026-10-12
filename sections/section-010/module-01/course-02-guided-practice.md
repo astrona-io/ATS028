@@ -9,6 +9,10 @@ API migration requires both a served version and a valid schema for that version
 
 Use the module playground and its private kubeconfig. The context check below prevents commands from being directed at an unrelated cluster. The helper retries a command for a bounded interval after controller or policy changes; it cannot turn a persistent failure into success. Read the actual errors when the interval expires.
 
+Discovery tells you which endpoints the server serves. Schema explanation tells you which fields an endpoint accepts. Neither grants permission to submit an object. Treat an unsupported version, an invalid field and an authorization denial as separate failures.
+
+The practice keeps supported definitions and inspects their contract. A migration must preserve selectors and references as well as version strings. Client-side preparation and server-side validation provide different evidence; acceptance still needs later application verification.
+
 <!-- astrona:playground:renew -->
 
 For a timed catalog session, renew this module before continuing. Skip renewal for an untimed local author run:

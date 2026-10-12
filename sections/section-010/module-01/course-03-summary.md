@@ -9,4 +9,6 @@ API versions identify served schemas, while a resource can remain available thro
 
 A migration must preserve required fields, defaults and resource relationships in both authored and generated definitions. Server acceptance is useful evidence but does not establish that the application’s routing and lifecycle remain correct.
 
+API discovery, schema compatibility and authorization are distinct checks. A successful definition migration preserves resource relationships and intended application behavior, rather than merely replacing a version string.
+
 <!-- astrona:playground:destroy -->

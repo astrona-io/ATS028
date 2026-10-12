@@ -5,6 +5,22 @@ exam_objectives:
 ---
 # Recognizing Deprecated APIs And Migrating Definitions
 
+An old Deployment definition fails after a cluster upgrade, while the running application still exists. The failed submission and the stored workload describe different things. Discover the served interface before deciding that the application was deleted.
+
+## Learning objectives
+
+- Identify served resource groups and versions through discovery.
+- Distinguish removed endpoints from schema and permission errors.
+- Explain the behavior that a definition migration must preserve.
+
+## Before you start
+
+Use a shell on your own machine with the module playground running. A Pod is Kubernetes's unit for running one or more containers together. The environment provides the `probe` Deployment, which maintains application Pods, and the `starfleet` namespace, which groups these objects.
+
+Read-only commands below use kubectl, the Kubernetes command-line tool. Select the private kubeconfig: the file that identifies this environment's cluster and credentials. The commands do not change the application.
+
+## Recognizing Deprecated APIs and Migrating Definitions
+
 The Kubernetes application programming interface (API) exposes resource types through versioned endpoints. A resource definition names an `apiVersion` and a `kind`, which together identify the schema and endpoint used for that object. API deprecation means a version is being phased out; removal means that endpoint is no longer served in the affected Kubernetes release.
 
 ## Separate Resource Identity From API Version
@@ -36,6 +52,42 @@ Deprecation warnings should be treated as information for planned migration. An 
 After transforming a definition, check schema compatibility, effective defaults and resource relationships. Then reason about the workload's observed state: matching Pods, intended routing and healthy reconciliation. Server-side validation checks acceptance under the cluster's schema and controls; it does not prove that application requests meet business expectations.
 
 Keep the migration associated with the intended Kubernetes release and tool versions. Avoid assuming that a remembered retirement date applies forever. The useful maintenance skill is to discover current support, read the replacement contract and demonstrate preserved behavior, rather than memorize a list without checking its context.
+
+## Inspect the mechanism
+
+The application programming interface (API) server exposes resource endpoints through groups and versions. `apps/v1` identifies the group and version used by the fixture's Deployment. The kind identifies the object type, while the plural resource name identifies the endpoint used for requests. These names have related but different roles.
+
+The `api-versions` command lists served group versions. `api-resources` lists resource endpoints and their scope. `explain` reads the schema for a selected type and field. Discovery can establish that an endpoint exists without granting your identity permission to use it. A migration must also preserve selectors, required fields and references; changing the version text alone cannot prove that.
+
+```mermaid
+flowchart TB
+    D["Saved definition"] --> V["Group version and kind"]
+    V --> A["Served API endpoint"]
+    A --> S["Schema validation"]
+    S --> R["Accepted resource relationships"]
+    R --> B["Preserved application behavior"]
+```
+
+A supported version is the beginning of a migration check, rather than its complete outcome.
+
+<!-- astrona:playground:renew -->
+
+Select the private cluster connection and inspect the live state from your host shell:
+
+```sh
+export KUBECONFIG="$(astrona kubeconfig ats-028-playground-010-01)"
+if test "$(kubectl config current-context)" = "kind-astro-ats-028-playground-010-01"; then
+  kubectl api-versions
+  kubectl api-resources --api-group=apps
+  kubectl explain deployment.spec.selector --api-version=apps/v1
+else
+  printf "Select this module's private kubeconfig before continuing.\n" >&2
+fi
+```
+
+Locate `apps/v1`, the Deployment endpoint and the explanation of its selector. These are discovery and schema requests, not a workload update. Compare scope and version before interpreting a submission error. A removed endpoint, an invalid field and a forbidden action require different corrections; this healthy discovery result does not fabricate an obsolete API failure.
+
+You can now discover supported interfaces and classify failures at the right boundary. Preserving the intended application requires reviewing schema changes and verifying the resulting resource relationships and behavior.
 
 ## Common pitfalls
 
