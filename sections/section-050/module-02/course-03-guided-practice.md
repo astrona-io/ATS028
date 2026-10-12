@@ -9,6 +9,10 @@ The new Pod template asks for an environment value from a ConfigMap that does no
 
 Use the module playground and its private kubeconfig. The context check below prevents commands from being directed at an unrelated cluster. The helper retries a command for a bounded interval after controller or policy changes; it cannot turn a persistent failure into success. Read the actual errors when the interval expires.
 
+The practice changes configuration and port mapping deliberately so their symptoms can be compared. A mounted greeting and an environment greeting follow the fixture's explicit precedence rule; the mounted file wins when present. That behavior belongs to this application rather than to every Kubernetes workload.
+
+A wrong Service target port is a separate request-path defect. Keep the caller, name and operation fixed while checking the correction. The presence of a ready Pod does not prove the Service maps traffic to its actual listener.
+
 <!-- astrona:playground:renew -->
 
 For a timed catalog session, renew this module before continuing. Skip renewal for an untimed local author run:

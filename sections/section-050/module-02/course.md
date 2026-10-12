@@ -5,7 +5,7 @@ exam_objectives:
 ---
 # Application Dependencies And Focused Correction
 
-This module connects intended application behavior to declared resources and observed conditions.
+The `probe` application runs, but its effective settings differ from the intended values. Configuration can arrive through environment variables, mounted files and application defaults. Diagnose the value actually used rather than assuming the newest object is already effective.
 
 ## Learning Goals
 
