@@ -9,6 +9,10 @@ The probe server has independent readiness and liveness marker files. Creating t
 
 Use the module playground and its private kubeconfig. The context check below prevents commands from being directed at an unrelated cluster. The helper retries a command for a bounded interval after controller or policy changes; it cannot turn a persistent failure into success. Read the actual errors when the interval expires.
 
+The application fixture has separate readiness and health paths. Creating the readiness marker changes traffic eligibility; creating the health marker affects liveness only after a liveness probe is configured. The existence of a response path alone does not install that probe.
+
+Observe readiness, endpoint conditions and restart counts separately. The kubelet performs probes, and the backend controller reflects Pod readiness for Service traffic. A restarted container can remove a temporary marker in its writable layer, so that transient state does not behave like durable configuration.
+
 <!-- astrona:playground:renew -->
 
 For a timed catalog session, renew this module before continuing. Skip renewal for an untimed local author run:

@@ -5,7 +5,7 @@ exam_objectives:
 ---
 # Health Checks With Different Recovery Actions
 
-This module connects intended application behavior to declared resources and observed conditions.
+The `probe` process can remain running while readiness removes it from Service traffic. A liveness failure would instead request a restart. Choosing the correct check prevents a temporary dependency failure from causing unnecessary process replacement.
 
 ## Learning Goals
 
