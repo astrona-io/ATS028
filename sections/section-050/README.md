@@ -9,6 +9,9 @@ This section covers debugging in Kubernetes. You will study Placement And Contai
 
 Each module begins with its goals and ends with a summary. Reusable YAML knowledge checks follow the section summary and are registered separately for future presentation.
 
+
+You will locate the earliest unresolved application boundary. Placement, image preparation, process startup, configuration adoption and request routing leave different evidence. A focused correction preserves the original caller and operation when verifying recovery.
+
 ## Learning Outcomes
 
 - Distinguish unscheduled work from container preparation.
