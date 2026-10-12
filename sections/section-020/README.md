@@ -9,6 +9,9 @@ This section covers implement probes and health checks. You will study Health Ch
 
 Each module begins with its goals and ends with a summary. Reusable YAML knowledge checks follow the section summary and are registered separately for future presentation.
 
+
+You will assign health evidence to its intended action. Startup gates regular checks, readiness controls traffic eligibility and liveness can trigger replacement. Read the actual configured endpoint and threshold before interpreting a restart or missing backend.
+
 ## Learning Outcomes
 
 - Distinguish startup, readiness and liveness actions.
