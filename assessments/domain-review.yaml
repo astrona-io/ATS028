@@ -1,0 +1,111 @@
+schema_version: 1
+kind: question_bank
+id: ats028-domain-review
+course_id: ATS028
+exam_code: CKAD
+status: draft
+provenance: Original practice material; not official examination questions.
+scope:
+  type: domain
+  id: domain-review
+  title: Application Observability and Maintenance
+placement:
+  position: after
+  reading: sections/section-050/module-02/course-04-summary.md
+questions:
+- id: ats028-domain-review-q01
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Preserve behavior while changing a resource schema.
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: A chart continues rendering an unsupported API after one live object was migrated. What needs
+    correction?
+  options:
+  - id: a
+    text: Only the process user's name
+    explanation: Runtime identity does not alter the generated endpoint version.
+  - id: b
+    text: The generator's source or package configuration
+    explanation: Future output must use the supported resource contract too.
+  - id: c
+    text: Only the readiness threshold
+    explanation: Health timing does not change rendered API versions.
+  correct_option: b
+  explanation: Future output must use the supported resource contract too.
+- id: ats028-domain-review-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish startup, readiness and liveness actions.
+  source_readings:
+  - sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
+  prompt: A Pod stays Running but becomes unready. Which statement fits?
+  options:
+  - id: a
+    text: A readiness failure can affect traffic without a direct restart
+    explanation: Running state and useful endpoint eligibility are different conditions.
+  - id: b
+    text: Readiness must always delete the Pod
+    explanation: That is not the readiness action described.
+  - id: c
+    text: A Running Pod must be a usable Service endpoint
+    explanation: Selection and readiness must also be satisfied.
+  correct_option: a
+  explanation: Running state and useful endpoint eligibility are different conditions.
+- id: ats028-domain-review-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish resource usage from declared allocation.
+  source_readings:
+  - sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
+  prompt: One low memory-usage sample proves what about declared scheduling requests?
+  options:
+  - id: a
+    text: That all requests are automatically reduced to the sample
+    explanation: A measurement does not rewrite the resource specification.
+  - id: b
+    text: That the workload has no memory limit
+    explanation: Usage alone does not establish the configured limit.
+  - id: c
+    text: It does not establish that the declared request can fit a node
+    explanation: Measured usage and declared allocation are separate quantities.
+  correct_option: c
+  explanation: Measured usage and declared allocation are separate quantities.
+- id: ats028-domain-review-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Select the relevant container and previous instance.
+  source_readings:
+  - sections/section-040/module-01/course-02-selecting-the-right-container-log-and-time-window.md
+  prompt: Which choice best preserves an investigation of a recent restart?
+  options:
+  - id: a
+    text: Delete the Pod first to guarantee retained local logs
+    explanation: Deletion can remove access rather than preserve it.
+  - id: b
+    text: Inspect the relevant previous instance before evidence is lost
+    explanation: Lifecycle and retention can remove useful records later.
+  - id: c
+    text: Assume the next container's startup text contains every old failure
+    explanation: The new instance does not universally reproduce prior records.
+  correct_option: b
+  explanation: Lifecycle and retention can remove useful records later.
+- id: ats028-domain-review-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Select a focused correction and verify the intended result.
+  source_readings:
+  - sections/section-050/module-02/course-02-tracing-a-service-request.md
+  prompt: Why verify an actual request after a resource correction?
+  options:
+  - id: a
+    text: Object state alone may not prove the intended application operation
+    explanation: Meaningful verification connects the change to its expected behavior.
+  - id: b
+    text: Every accepted object guarantees all business outcomes
+    explanation: Server acceptance does not supply that guarantee.
+  - id: c
+    text: Verification can always be replaced by counting file lines
+    explanation: Text length does not demonstrate application correctness.
+  correct_option: a
+  explanation: Meaningful verification connects the change to its expected behavior.

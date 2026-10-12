@@ -1,9 +1,9 @@
-# Preparation scaffold. Technical pages stay draft until authoring and review.
+# CKAD concepts, module playgrounds and guided practice; YAML checks are indexed separately.
 training:
   id: ATS028
   title: 'CKAD: Application Observability and Maintenance'
-  description: Preparation scaffold for Application Observability and Maintenance. Lessons and environments
-    are planned.
+  description: Detailed CKAD teaching with module playgrounds, guided hands-on practice and reusable YAML
+    knowledge checks. Technical content remains draft for review.
   certification:
     name: Certified Kubernetes Application Developer
     code: CKAD
@@ -19,7 +19,7 @@ training:
 modules:
 - id: module-intro
   title: Introduction
-  description: Planned introduction and authoring status.
+  description: Audience, learning method, reading requirements and authoring process.
   content:
   - type: reading
     title: Introduction
@@ -35,51 +35,123 @@ modules:
     path: sections/intro/course-03-how-this-course-is-made.md
 - id: module-010
   title: Understand API deprecations
-  description: Planned coverage of this curriculum objective.
+  description: Developed explanations and application reasoning for Understand API deprecations.
+  draft: true
   content:
-  - type: reading
-    title: Section Overview
-    path: sections/section-010/README.md
   - type: reading
     title: Understand API deprecations
+    path: sections/section-010/README.md
+  - type: reading
+    title: API Discovery And Safe Definition Migration
     path: sections/section-010/module-01/course.md
+  - type: reading
+    title: Recognizing Deprecated APIs And Migrating Definitions
+    path: sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  - type: reading
+    title: Discover A Served API And Reject A Removed Definition
+    path: sections/section-010/module-01/course-02-guided-practice.md
+  - type: reading
+    title: Summary
+    path: sections/section-010/module-01/course-03-summary.md
 - id: module-020
   title: Implement probes and health checks
-  description: Planned coverage of this curriculum objective.
+  description: Developed explanations and application reasoning for Implement probes and health checks.
+  draft: true
   content:
-  - type: reading
-    title: Section Overview
-    path: sections/section-020/README.md
   - type: reading
     title: Implement probes and health checks
+    path: sections/section-020/README.md
+  - type: reading
+    title: Health Checks With Different Recovery Actions
     path: sections/section-020/module-01/course.md
+  - type: reading
+    title: Designing Startup, Readiness And Liveness Checks
+    path: sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
+  - type: reading
+    title: Distinguish Readiness Removal From Liveness Restart
+    path: sections/section-020/module-01/course-02-guided-practice.md
+  - type: reading
+    title: Summary
+    path: sections/section-020/module-01/course-03-summary.md
 - id: module-030
   title: Use built-in CLI tools to monitor Kubernetes applications
-  description: Planned coverage of this curriculum objective.
+  description: Developed explanations and application reasoning for Use built-in CLI tools to monitor
+    Kubernetes applications.
+  draft: true
   content:
-  - type: reading
-    title: Section Overview
-    path: sections/section-030/README.md
   - type: reading
     title: Use built-in CLI tools to monitor Kubernetes applications
+    path: sections/section-030/README.md
+  - type: reading
+    title: Built-In Inspection And Resource Metrics
     path: sections/section-030/module-01/course.md
+  - type: reading
+    title: Choosing Diagnostic Evidence With kubectl
+    path: sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
+  - type: reading
+    title: Combine Resource Status, Events And Live Metrics
+    path: sections/section-030/module-01/course-02-guided-practice.md
+  - type: reading
+    title: Summary
+    path: sections/section-030/module-01/course-03-summary.md
 - id: module-040
   title: Utilize container logs
-  description: Planned coverage of this curriculum objective.
+  description: Developed explanations and application reasoning for Utilize container logs.
+  draft: true
   content:
-  - type: reading
-    title: Section Overview
-    path: sections/section-040/README.md
   - type: reading
     title: Utilize container logs
+    path: sections/section-040/README.md
+  - type: reading
+    title: Container Logs And Lifecycle Evidence
     path: sections/section-040/module-01/course.md
+  - type: reading
+    title: Logs, Exits And Crash Loops
+    path: sections/section-040/module-01/course-01-logs-exits-and-crash-loops.md
+  - type: reading
+    title: Selecting The Right Container Log And Time Window
+    path: sections/section-040/module-01/course-02-selecting-the-right-container-log-and-time-window.md
+  - type: reading
+    title: Read Current And Previous Container Logs
+    path: sections/section-040/module-01/course-03-guided-practice.md
+  - type: reading
+    title: Summary
+    path: sections/section-040/module-01/course-04-summary.md
 - id: module-050
   title: Debugging in Kubernetes
-  description: Planned coverage of this curriculum objective.
+  description: Developed explanations and application reasoning for Debugging in Kubernetes.
+  draft: true
   content:
   - type: reading
-    title: Section Overview
+    title: Debugging in Kubernetes
     path: sections/section-050/README.md
   - type: reading
-    title: Debugging in Kubernetes
+    title: Placement And Container Preparation Diagnosis
     path: sections/section-050/module-01/course.md
+  - type: reading
+    title: Placement And Dependency Evidence
+    path: sections/section-050/module-01/course-01-placement-and-dependency-evidence.md
+  - type: reading
+    title: Image Preparation And Container Startup
+    path: sections/section-050/module-01/course-02-image-preparation-and-container-startup.md
+  - type: reading
+    title: Locate Pending Placement And Repair A Node Selector
+    path: sections/section-050/module-01/course-03-guided-practice.md
+  - type: reading
+    title: Summary
+    path: sections/section-050/module-01/course-04-summary.md
+  - type: reading
+    title: Application Dependencies And Focused Correction
+    path: sections/section-050/module-02/course.md
+  - type: reading
+    title: Configuration, Dependencies And Request Failures
+    path: sections/section-050/module-02/course-01-configuration-dependencies-and-request-failures.md
+  - type: reading
+    title: Tracing A Service Request
+    path: sections/section-050/module-02/course-02-tracing-a-service-request.md
+  - type: reading
+    title: Repair A Missing Configuration Dependency
+    path: sections/section-050/module-02/course-03-guided-practice.md
+  - type: reading
+    title: Summary
+    path: sections/section-050/module-02/course-04-summary.md
