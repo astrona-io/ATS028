@@ -5,6 +5,22 @@ exam_objectives:
 ---
 # Selecting The Right Container Log And Time Window
 
+During a rollout, two `probe` replicas can emit messages from different versions. A Deployment-level log shortcut can show only one selected Pod. Useful log diagnosis starts with an explicit Pod, container and time window.
+
+## Learning objectives
+
+- Choose the container and lifecycle instance relevant to a symptom.
+- Bound and timestamp a log observation.
+- Explain the limits of previous-container and replaced-Pod history.
+
+## Before you start
+
+Use a shell on your own machine with the module playground running. A Pod is Kubernetes's unit for running one or more containers together. The environment provides the `probe` Deployment, which maintains application Pods, and the `starfleet` namespace, which groups these objects.
+
+Read-only commands below use kubectl, the Kubernetes command-line tool. Select the private kubeconfig: the file that identifies this environment's cluster and credentials. The commands do not change the application.
+
+## Selecting The Right Container Log and Time Window
+
 Container logs provide text emitted by a container process through the supported logging path. They can describe application events and errors, but they do not automatically include every file the process writes. Useful diagnosis depends on selecting the correct Pod, container, instance and time window before interpreting the text.
 
 ## Understand What The Logging Path Captures
@@ -38,6 +54,41 @@ Logs can contain confidential input, tokens or personal information. Authors sho
 Suppose `scout` reports connection refused while trying to contact a backend. The message supports investigating the selected backend address, port and listener. It does not alone prove that a NetworkPolicy caused the failure or that credentials are incorrect. The next observation should distinguish those possibilities using resource relationships and connection behavior.
 
 Use logs to identify the process's perspective, then compare that perspective with Kubernetes status and dependency evidence. A complete explanation states which instance produced the record, what operation failed and what further facts establish the cause. That is stronger than treating one familiar error phrase as a universal diagnosis.
+
+## Inspect the mechanism
+
+The runtime captures supported standard output and standard error streams, and the kubelet exposes the available records. A file written inside a container is not automatically included. A restarted container's previous instance is also different from a Pod that has been deleted and replaced.
+
+First identify the Pod that experienced the symptom, then choose the container within it. `-c` names the container, `--previous` requests retained logs from its preceding terminated instance, and `--since` restricts the time window. A missing previous stream can be normal for a container that never restarted. Local log retention is limited, so these flags do not provide an unlimited historical archive.
+
+```mermaid
+flowchart TB
+    P["Selected Pod"] --> C["Selected container"]
+    C --> I["Current or previous instance"]
+    I --> W["Time and record window"]
+    W --> L["Attributed log records"]
+    L --> D["Comparison with symptom"]
+```
+
+A meaningful log record has an identified source, lifecycle instance and observation window.
+
+<!-- astrona:playground:renew -->
+
+Select the private cluster connection and inspect the live state from your host shell:
+
+```sh
+export KUBECONFIG="$(astrona kubeconfig ats-028-playground-040-01)"
+if test "$(kubectl config current-context)" = "kind-astro-ats-028-playground-040-01"; then
+  kubectl -n starfleet get pods -l app=probe
+  kubectl -n starfleet logs -l app=probe -c probe --since=5m --tail=20 --timestamps --prefix
+else
+  printf "Select this module's private kubeconfig before continuing.\n" >&2
+fi
+```
+
+`--prefix` identifies the source Pod and container in each returned line. With a label selector, records can come from several replicas, so retain that identity when comparing events. No records may mean no recent application output. It does not establish healthy behavior. Use an explicit Pod and its actual restart history before requesting a previous instance.
+
+You can now choose log evidence without merging unrelated replicas or attempts. Status and dependency evidence still provide facts that the application stream may never record.
 
 ## Common pitfalls
 

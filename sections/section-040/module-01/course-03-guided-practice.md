@@ -9,6 +9,10 @@ The practice Pod prints a message and then exits with a nonzero status. Kubernet
 
 Use the module playground and its private kubeconfig. The context check below prevents commands from being directed at an unrelated cluster. The helper retries a command for a bounded interval after controller or policy changes; it cannot turn a persistent failure into success. Read the actual errors when the interval expires.
 
+The current container instance and the preceding terminated instance can have different logs. Read restart count and last termination state before choosing a stream. If the process never started, application logs cannot supply preparation evidence.
+
+A label-selected log request can combine replicas; preserve Pod and container attribution when comparing records. Bounded tails and timestamps reduce unrelated data but do not create missing history. Avoid collecting environment values or confidential configuration just to make a log report look complete.
+
 <!-- astrona:playground:renew -->
 
 For a timed catalog session, renew this module before continuing. Skip renewal for an untimed local author run:

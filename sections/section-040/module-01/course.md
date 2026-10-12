@@ -5,7 +5,7 @@ exam_objectives:
 ---
 # Container Logs And Lifecycle Evidence
 
-This module connects intended application behavior to declared resources and observed conditions.
+A container exits because it cannot read required configuration. Kubernetes retries it and later displays a crash-loop backoff. The retry delay describes Kubernetes's response, while the first exit and its inputs explain the failure.
 
 ## Learning Goals
 

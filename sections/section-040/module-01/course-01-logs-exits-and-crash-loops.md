@@ -5,6 +5,22 @@ exam_objectives:
 ---
 # Logs, Exits And Crash Loops
 
+A container exits because it cannot read required configuration. Kubernetes retries it and later displays a crash-loop backoff. The retry delay describes Kubernetes's response, while the first exit and its inputs explain the failure.
+
+## Learning objectives
+
+- Correlate current and previous container state with logs.
+- Distinguish an exit cause from restart backoff.
+- Construct a failure timeline without exposing confidential data.
+
+## Before you start
+
+Use a shell on your own machine with the module playground running. A Pod is Kubernetes's unit for running one or more containers together. The environment provides the `probe` Deployment, which maintains application Pods, and the `starfleet` namespace, which groups these objects.
+
+Read-only commands below use kubectl, the Kubernetes command-line tool. Select the private kubeconfig: the file that identifies this environment's cluster and credentials. The commands do not change the application.
+
+## Logs, Exits and Crash Loops
+
 The `scout` process exits immediately after reading its configuration. Kubernetes can restart it, but repeated restarts do not fix a missing setting. Application debugging focuses on what the process did, what inputs it received and which dependencies it needed.
 
 A log is a record emitted by software about an event or condition. Logs can include timestamps, request identifiers and error details. A termination record can provide an exit code and reason. Read these together: an error message about a missing setting and an immediate nonzero exit support a different explanation from a memory-limit termination.
@@ -32,6 +48,42 @@ A useful hypothesis states which input or condition caused the failure and what 
 Changing the image, credentials, memory and probe at once can make the application run without identifying which change mattered. It can also conceal a new weakness, such as disabled health checks or excessive permissions. Prefer a focused correction supported by evidence and verify the expected transition.
 
 Keep the diagnostic record safe to share. Replace sensitive values with descriptions of their role, retain useful timestamps and include the relevant process or container identity. A strong explanation can demonstrate a configuration fault without copying production credentials into a public issue.
+
+## Inspect the mechanism
+
+Container status separates the current state from the last terminated state and records a restart count. A currently running attempt can coexist with an earlier failed instance. The log stream you select must belong to the relevant container and attempt if it is to explain that termination.
+
+An exit reason and code provide runtime evidence. Application logs provide the process's perspective, which may be incomplete if output was buffered or the process was killed. A memory termination can leave no final application exception. Compare termination reason, resource settings and the preceding messages rather than treating the last line as a universal cause.
+
+```mermaid
+flowchart TB
+    I["Process input"] --> E["Process exit"]
+    E --> T["Termination record"]
+    E --> R["Restart attempt"]
+    R --> B["Backoff after repeated failure"]
+    L["Application messages"] --> D["Failure timeline"]
+    T --> D
+```
+
+Backoff follows failed attempts; it is not the original application event that caused the exit.
+
+<!-- astrona:playground:renew -->
+
+Select the private cluster connection and inspect the live state from your host shell:
+
+```sh
+export KUBECONFIG="$(astrona kubeconfig ats-028-playground-040-01)"
+if test "$(kubectl config current-context)" = "kind-astro-ats-028-playground-040-01"; then
+  kubectl -n starfleet get pods -l app=probe -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.status.containerStatuses}{"\n"}{end}'
+  kubectl -n starfleet logs deployment/probe -c probe --tail=20 --timestamps
+else
+  printf "Select this module's private kubeconfig before continuing.\n" >&2
+fi
+```
+
+Read state, lastState and restartCount before interpreting the selected logs. The healthy baseline may have no terminated instance and no startup message; neither requires invented crash output. `--tail` bounds records, and `--timestamps` adds recorded times. The Deployment log shortcut chooses a Pod, so use an explicit Pod name when investigating a specific failed replica.
+
+You can now connect a restart to the relevant process instance and evidence. A focused correction must change the cause, while repeated restarts alone can reproduce the same failure indefinitely.
 
 ## Common pitfalls
 
