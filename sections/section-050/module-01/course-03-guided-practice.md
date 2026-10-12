@@ -9,6 +9,10 @@ An intentionally unmatched node selector prevents the new Pod template from bein
 
 Use the module playground and its private kubeconfig. The context check below prevents commands from being directed at an unrelated cluster. The helper retries a command for a bounded interval after controller or policy changes; it cannot turn a persistent failure into success. Read the actual errors when the interval expires.
 
+The deliberately created failure cases stop at different boundaries. An unschedulable request prevents node assignment, while an invalid image can fail after assignment. A corrected placement rule cannot repair a missing executable, and changing a process command cannot supply missing node capacity.
+
+For each case, identify the last completed stage and inspect its responsible component. Read current events alongside the current specification so an old failed attempt does not become the explanation for a newer, corrected state.
+
 <!-- astrona:playground:renew -->
 
 For a timed catalog session, renew this module before continuing. Skip renewal for an untimed local author run:

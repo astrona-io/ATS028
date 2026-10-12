@@ -5,7 +5,7 @@ exam_objectives:
 ---
 # Placement And Container Preparation Diagnosis
 
-This module connects intended application behavior to declared resources and observed conditions.
+A `probe` Pod is Pending because no node can satisfy its declared request and placement rules. Application logs cannot explain a process that has not started. Scheduling status and events identify this earlier boundary.
 
 ## Learning Goals
 
