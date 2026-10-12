@@ -9,6 +9,9 @@ This section covers use built-in CLI tools to monitor Kubernetes applications. Y
 
 Each module begins with its goals and ends with a summary. Reusable YAML knowledge checks follow the section summary and are registered separately for future presentation.
 
+
+You will select observations by the question they answer. Desired specification, current status, recent events and measured usage describe different facts. Their scope and timing must match the same workload and symptom before they support a diagnosis.
+
 ## Learning Outcomes
 
 - Identify cluster, namespace and identity context.
