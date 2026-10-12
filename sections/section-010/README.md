@@ -9,6 +9,9 @@ This section covers understand API deprecations. You will study API Discovery An
 
 Each module begins with its goals and ends with a summary. Reusable YAML knowledge checks follow the section summary and are registered separately for future presentation.
 
+
+You will discover served interfaces and interpret their schema before adapting a definition. Version replacement, permission and ordinary validation errors require different corrections. A complete migration preserves selectors, references and application behavior as well as a supported version string.
+
 ## Learning Outcomes
 
 - Distinguish deprecation from endpoint removal.
