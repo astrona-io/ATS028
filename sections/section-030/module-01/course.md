@@ -5,7 +5,7 @@ exam_objectives:
 ---
 # Built-In Inspection And Resource Metrics
 
-This module connects intended application behavior to declared resources and observed conditions.
+The `probe` Deployment requests two replicas, its status reports current availability, and metrics report recent resource usage. These are three different observations. Choosing the right one makes a troubleshooting claim precise.
 
 ## Learning Goals
 

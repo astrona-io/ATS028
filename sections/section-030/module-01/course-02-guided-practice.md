@@ -9,6 +9,10 @@ This playground enables metrics-server in addition to ordinary API inspection. Y
 
 Use the module playground and its private kubeconfig. The context check below prevents commands from being directed at an unrelated cluster. The helper retries a command for a bounded interval after controller or policy changes; it cannot turn a persistent failure into success. Read the actual errors when the interval expires.
 
+Object inspection, event inspection and usage metrics come from different observation paths. Read desired replicas against available replicas, then use Pod state to explain any difference. Metrics Server adds recent usage and may need time to collect its first samples.
+
+Requests and limits are declared settings, while `top` reports measured consumption. An unavailable metrics response does not prove the application is down. Keep the selected context and namespace fixed so all observations describe the same workload.
+
 <!-- astrona:playground:renew -->
 
 For a timed catalog session, renew this module before continuing. Skip renewal for an untimed local author run:
