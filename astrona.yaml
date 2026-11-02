@@ -36,7 +36,7 @@ modules:
   title: Understand API deprecations
   description: Developed explanations and application reasoning for Understand API
     deprecations.
-  status: alpha
+  maturity: alpha
   content:
   - type: reading
     title: Understand API deprecations
@@ -76,7 +76,7 @@ modules:
   title: Implement probes and health checks
   description: Developed explanations and application reasoning for Implement probes
     and health checks.
-  status: alpha
+  maturity: alpha
   content:
   - type: reading
     title: Implement probes and health checks
@@ -133,7 +133,7 @@ modules:
   title: Use built-in CLI tools to monitor Kubernetes applications
   description: Developed explanations and application reasoning for Use built-in CLI
     tools to monitor Kubernetes applications.
-  status: alpha
+  maturity: alpha
   content:
   - type: reading
     title: Use built-in CLI tools to monitor Kubernetes applications
@@ -172,7 +172,7 @@ modules:
   title: Utilize container logs
   description: Developed explanations and application reasoning for Utilize container
     logs.
-  status: alpha
+  maturity: alpha
   content:
   - type: reading
     title: Utilize container logs
@@ -213,7 +213,7 @@ modules:
 - id: module-050
   title: Debugging in Kubernetes
   description: Developed explanations and application reasoning for Debugging in Kubernetes.
-  status: alpha
+  maturity: alpha
   content:
   - type: reading
     title: Debugging in Kubernetes
