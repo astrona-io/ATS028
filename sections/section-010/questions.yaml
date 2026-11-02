@@ -1,0 +1,110 @@
+schema_version: 1
+kind: question_bank
+id: ats028-section-010
+course_id: ATS028
+exam_code: CKAD
+status: draft
+provenance: Original practice material; not official examination questions.
+scope:
+  type: section
+  id: section-010
+  title: Understand API deprecations
+placement:
+  position: after
+  reading: sections/section-010/module-01/course-03-summary.md
+questions:
+- id: ats028-section-010-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Distinguish deprecation from endpoint removal.
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: What is the difference between deprecation and removal of an API version?
+  options:
+  - id: a
+    text: Removal proves all replacement versions are unavailable
+    explanation: The resource may remain served through a supported representation.
+  - id: b
+    text: Deprecation signals phase-out while removal ends service of that endpoint
+    explanation: A deprecated endpoint can still accept requests before its removal.
+  - id: c
+    text: Deprecation always immediately deletes every stored object
+    explanation: Deprecation and stored object deletion are separate behaviors.
+  correct_option: b
+  explanation: A deprecated endpoint can still accept requests before its removal.
+- id: ats028-section-010-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Discover served groups, versions and resources.
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: Which discovery information helps determine whether a requested version is served?
+  options:
+  - id: a
+    text: The cluster's API resources and versions
+    explanation: Discovery shows supported endpoints under the server's current configuration.
+  - id: b
+    text: The image tag used by an unrelated workload
+    explanation: Image labels do not enumerate served APIs.
+  - id: c
+    text: The author's previous command history alone
+    explanation: Historical use does not establish current server support.
+  correct_option: a
+  explanation: Discovery shows supported endpoints under the server's current configuration.
+- id: ats028-section-010-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Preserve behavior while changing a resource schema.
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: Why is changing only apiVersion sometimes insufficient?
+  options:
+  - id: a
+    text: The new version automatically repairs every field
+    explanation: A version string is not a complete semantic transformation.
+  - id: b
+    text: The old and new schemas must always be identical
+    explanation: Versioned APIs can have relevant schema differences.
+  - id: c
+    text: The replacement schema may change fields, defaults and required relationships
+    explanation: Migration must preserve the definition's intended behavior under the new contract.
+  correct_option: c
+  explanation: Migration must preserve the definition's intended behavior under the new contract.
+- id: ats028-section-010-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Distinguish API support, validation and permission errors.
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: A served resource request returns forbidden. What should be investigated?
+  options:
+  - id: a
+    text: Only the container's listening port
+    explanation: Network listeners do not grant API permissions.
+  - id: b
+    text: The requesting identity's authorization
+    explanation: Permission denial is different from an endpoint being unsupported.
+  - id: c
+    text: Only whether the resource kind is deprecated
+    explanation: A permission denial does not establish API retirement.
+  correct_option: b
+  explanation: Permission denial is different from an endpoint being unsupported.
+- id: ats028-section-010-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Preserve behavior while changing a resource schema.
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: A manually fixed object is later regenerated with an old API version. What was missed?
+  options:
+  - id: a
+    text: The generator inputs and rendered output
+    explanation: Charts and overlays must also stop producing the unsupported definition.
+  - id: b
+    text: The Pod's default route
+    explanation: Pod routing does not rewrite the generator's API version.
+  - id: c
+    text: The Service's replica count
+    explanation: Services do not have that workload replica contract.
+  correct_option: a
+  explanation: Charts and overlays must also stop producing the unsupported definition.

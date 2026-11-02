@@ -1,7 +1,29 @@
 ---
 draft: true
+exam_objectives:
+- Understand API deprecations
 ---
-# Understand API deprecations
+# API Discovery And Safe Definition Migration
 
-This module is an authoring placeholder. Its lesson parts, examples and
-practice environment will be planned when content work begins.
+An old Deployment definition fails after a cluster upgrade, while the running application still exists. The failed submission and the stored workload describe different things. Discover the served interface before deciding that the application was deleted.
+
+## Learning Goals
+
+- Distinguish deprecation from endpoint removal.
+- Discover served groups, versions and resources.
+- Preserve behavior while changing a resource schema.
+- Distinguish API support, validation and permission errors.
+
+## Before You Start
+
+Use the module playground for guided practice. It provides an isolated kind cluster and the declared starting fixtures. You need the Astrona command-line tool, kubectl and a working Podman engine; selected exercises also use Helm, curl or OpenSSL. Keep the module's private kubeconfig selected when running application commands.
+
+## Reading Order
+
+1. Recognizing Deprecated APIs And Migrating Definitions
+2. Discover A Served API And Reject A Removed Definition
+3. Summary
+
+The playground provides the initial state for the guided practice. Keep it open while following the practical steps.
+
+<!-- astrona:playground -->

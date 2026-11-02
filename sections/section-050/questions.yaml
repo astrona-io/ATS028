@@ -1,0 +1,112 @@
+schema_version: 1
+kind: question_bank
+id: ats028-section-050
+course_id: ATS028
+exam_code: CKAD
+status: draft
+provenance: Original practice material; not official examination questions.
+scope:
+  type: section
+  id: section-050
+  title: Debugging in Kubernetes
+placement:
+  position: after
+  reading: sections/section-050/module-02/course-04-summary.md
+questions:
+- id: ats028-section-050-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Interpret placement constraints and declared capacity.
+  source_readings:
+  - sections/section-050/module-01/course-01-placement-and-dependency-evidence.md
+  prompt: A Pod is Pending because its requests cannot fit eligible nodes. What addresses the relevant
+    failure layer?
+  options:
+  - id: a
+    text: Only select previous container logs
+    explanation: The process may not have started in the pending Pod.
+  - id: b
+    text: Review capacity, requests and placement constraints
+    explanation: Scheduling depends on declared allocation and eligible capacity.
+  - id: c
+    text: Only change the Ingress host
+    explanation: Host routing does not create suitable scheduling capacity.
+  correct_option: b
+  explanation: Scheduling depends on declared allocation and eligible capacity.
+- id: ats028-section-050-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Diagnose registry, mount and startup dependencies.
+  source_readings:
+  - sections/section-050/module-01/course-02-image-preparation-and-container-startup.md
+  prompt: An unavailable Secret mount blocks preparation. Which relationship should be examined?
+  options:
+  - id: a
+    text: The referenced object, namespace, keys and access conditions
+    explanation: Preparation depends on valid configuration and mount prerequisites.
+  - id: b
+    text: Only the public response path
+    explanation: External routing does not supply a missing mounted object.
+  - id: c
+    text: Only the canary percentage
+    explanation: Traffic distribution does not repair mount preparation.
+  correct_option: a
+  explanation: Preparation depends on valid configuration and mount prerequisites.
+- id: ats028-section-050-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Distinguish configuration, identity and network failures.
+  source_readings:
+  - sections/section-050/module-02/course-01-configuration-dependencies-and-request-failures.md
+  prompt: A process runs but fails requests using a missing configuration value. What is the strongest
+    next step?
+  options:
+  - id: a
+    text: Mark every network policy as the cause without evidence
+    explanation: A missing input supports a configuration hypothesis first.
+  - id: b
+    text: Increase the number of identical broken replicas
+    explanation: More copies do not supply the absent value.
+  - id: c
+    text: Compare the application's expected input with its delivered configuration
+    explanation: Running state does not prove configuration correctness.
+  correct_option: c
+  explanation: Running state does not prove configuration correctness.
+- id: ats028-section-050-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Trace a request through application dependencies.
+  source_readings:
+  - sections/section-050/module-02/course-02-tracing-a-service-request.md
+  prompt: A Service exists but has no ready selected backends. What must diagnosis separate?
+  options:
+  - id: a
+    text: Only file names in the source repository
+    explanation: Source naming does not directly prove current endpoints.
+  - id: b
+    text: Selector matching and readiness conditions
+    explanation: Either a mismatch or unready selected Pods can explain missing usable endpoints.
+  - id: c
+    text: Only image tag spelling and chart package size
+    explanation: Those observations do not establish the backend selection condition.
+  correct_option: b
+  explanation: Either a mismatch or unready selected Pods can explain missing usable endpoints.
+- id: ats028-section-050-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Select a focused correction and verify the intended result.
+  source_readings:
+  - sections/section-050/module-02/course-02-tracing-a-service-request.md
+  prompt: After correcting a target-port mismatch, what verifies the intended outcome?
+  options:
+  - id: a
+    text: A meaningful request through the expected access path
+    explanation: Configuration repair should be connected to useful application behavior.
+  - id: b
+    text: Only that the edited text contains a port number
+    explanation: Text alone does not establish the effective request path.
+  - id: c
+    text: Only that the author saved a file
+    explanation: Saving source does not prove the deployed contract changed.
+  correct_option: a
+  explanation: Configuration repair should be connected to useful application behavior.
