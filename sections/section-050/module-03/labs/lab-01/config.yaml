@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Inspect A Running Pod And Correct Its Service (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-lab-050-03-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/python:3.13-alpine
+      - docker.io/library/busybox:1.37.0
+
+# The fault is left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads and the faulty Service
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: listen-port-recorded
+      description: The ConfigMap scout-findings key listen-port holds the port the process listens on
+      type: file
+      source: validation/validate-listen-port-recorded.sh
+      hint: Run netstat -tln inside the scout container with kubectl exec. Do not use the containerPort field.
+    - name: app-version-recorded
+      description: The ConfigMap scout-findings key app-version holds the value of APP_VERSION read from the container
+      type: file
+      source: validation/validate-app-version-recorded.sh
+      hint: Run printenv APP_VERSION inside the container with kubectl exec.
+    - name: ephemeral-container-attached
+      description: The pod scout has an ephemeral container named inspector that targets the container app
+      type: file
+      source: validation/validate-ephemeral-container-attached.sh
+      hint: Use kubectl debug scout -c inspector --image=docker.io/library/busybox:1.37.0 --target=app -- sleep 3600.
+    - name: service-reachable
+      description: A request from the pod shuttle to http://scout succeeds
+      type: file
+      source: validation/validate-service-reachable.sh
+      hint: Correct the targetPort of the Service scout so that it matches the port the process listens on.
+    - name: scout-pod-unchanged
+      description: The pod scout is the original pod and has not restarted
+      type: file
+      source: validation/validate-scout-pod-unchanged.sh
+      hint: Do not delete or recreate the pod. Fix the Service instead.
+
+teardown:
+  keepCluster: false

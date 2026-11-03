@@ -7,18 +7,18 @@ exam_objectives:
 
 The `probe` Deployment requests two replicas, its status reports current availability, and metrics report recent resource usage. These are three different observations. Choosing the right one makes a troubleshooting claim precise.
 
-## Learning Goals
+## Learning objectives
 
 - Identify cluster, namespace and identity context.
 - Compare desired specification, status and events.
 - Distinguish resource usage from declared allocation.
 - Choose diagnostic commands for the observed lifecycle stage.
 
-## Before You Start
+## Before you start
 
 Use the module playground for guided practice. It provides an isolated kind cluster and the declared starting fixtures. You need the Astrona command-line tool, kubectl and a working Podman engine; selected exercises also use Helm, curl or OpenSSL. Keep the module's private kubeconfig selected when running application commands.
 
-## Reading Order
+## Reading order
 
 1. Choosing Diagnostic Evidence With kubectl
 2. Combine Resource Status, Events And Live Metrics

@@ -1,0 +1,270 @@
+# Knowledge check for section 030. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats028-030
+course_id: ATS028
+exam_code: CKAD
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-030
+  title: 'Application Observability And Maintenance: Built-In Monitoring Tools'
+questions:
+- id: ats028-030-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose between spec, status and events when diagnosing a workload
+  source_readings:
+  - sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
+  prompt: A pod stays in `Pending`. You want to know why the scheduler did not place
+    it. Which evidence names the reason most directly?
+  options:
+  - id: a
+    text: The container logs of the pod.
+    explanation: A pending pod has no running container, so there is no log.
+  - id: b
+    text: The events of the pod, shown at the end of `kubectl describe pod`.
+    explanation: Correct. The scheduler records a `FailedScheduling` event with the
+      reason, such as an unmatched node selector or missing resources.
+  - id: c
+    text: "`kubectl top pod` for the pod."
+    explanation: Resource usage exists only for a running container.
+  - id: d
+    text: The `spec.replicas` field of the owner.
+    explanation: The replica count says how many pods are wanted, not why one is not
+      placed.
+  correct_option: b
+  explanation: Events hold the decisions of the scheduler and the kubelet. A pod that
+    has not started has no logs and no usage.
+- id: ats028-030-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Recognize that resource use and resource allocation are different
+    signals
+  source_readings:
+  - sections/section-030/module-02/course-02-output-formats-sorting-and-resource-usage.md
+  prompt: "`kubectl top pod` shows 20m CPU for a pod whose container has a CPU request
+    of 500m. What does this tell you?"
+  options:
+  - id: a
+    text: The container is being throttled to 20m.
+    explanation: Throttling is related to limits and is not shown by this value.
+  - id: b
+    text: The pod currently uses 20m, while 500m is the amount that the scheduler
+      reserved on the node.
+    explanation: Correct. Usage is one recent sample, and the request is a reservation.
+      They are two numbers.
+  - id: c
+    text: The request is wrong and Kubernetes lowers it to 20m automatically.
+    explanation: Kubernetes does not change a request by itself.
+  - id: d
+    text: The pod will be evicted because it uses less than it requested.
+    explanation: Using less than the request does not cause an eviction.
+  correct_option: b
+  explanation: "`kubectl top` shows current use from the Metrics API. The request
+    is a reservation that the scheduler uses for placement."
+- id: ats028-030-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Identify where kubectl top gets its data
+  source_readings:
+  - sections/section-030/module-02/course-02-output-formats-sorting-and-resource-usage.md
+  prompt: "`kubectl top pods` fails on a new cluster with an error about the Metrics
+    API. What is the most likely cause?"
+  options:
+  - id: a
+    text: The container runtime is not installed.
+    explanation: The pods run, so a runtime exists.
+  - id: b
+    text: The `metrics-server` add-on is not installed or has not collected its first
+      sample yet.
+    explanation: Correct. `kubectl top` reads `metrics.k8s.io`, which metrics-server
+      serves, and the first sample needs up to a minute.
+  - id: c
+    text: The kubeconfig has no default namespace.
+    explanation: A missing namespace gives an empty result, not a Metrics API error.
+  - id: d
+    text: The pods have no labels.
+    explanation: "`kubectl top` does not need labels."
+  correct_option: b
+  explanation: The Metrics API is served by metrics-server. Without it, or before
+    its first sample, `kubectl top` cannot answer.
+- id: ats028-030-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Combine label selectors correctly
+  source_readings:
+  - sections/section-030/module-02/course-01-label-and-field-selectors.md
+  prompt: You need the pods that have `tier=web` and are in `env=prod` or `env=staging`.
+    Which selector is correct?
+  options:
+  - id: a
+    text: "`-l tier=web,env=prod,env=staging`"
+    explanation: A comma means AND, so a pod would need two different values for `env`.
+  - id: b
+    text: "`--field-selector tier=web,env in (prod,staging)`"
+    explanation: Labels are not fields, and field selectors support only equality.
+  - id: c
+    text: "`-l tier=web | env=prod | env=staging`"
+    explanation: The pipe is a shell pipe, not a selector operator.
+  - id: d
+    text: "`-l 'tier=web,env in (prod,staging)'`"
+    explanation: Correct. The comma combines the two conditions with AND, and `in
+      (...)` is OR on one key. The expression is quoted for the shell.
+  correct_option: d
+  explanation: Commas in a label selector mean AND. Use `in (a,b)` for OR on one key
+    and quote the expression.
+- id: ats028-030-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Use a field selector to find a finished pod
+  source_readings:
+  - sections/section-030/module-02/course-01-label-and-field-selectors.md
+  prompt: A Job has finished, and you want its pod without reading the whole list.
+    Which command selects it by phase?
+  options:
+  - id: a
+    text: "`kubectl get pods --field-selector=spec.containers.name=main`"
+    explanation: That field is not supported as a pod field selector.
+  - id: b
+    text: "`kubectl get pods -l status.phase=Succeeded`"
+    explanation: "`-l` selects labels, and the phase is a field."
+  - id: c
+    text: "`kubectl get pods --field-selector=status.phase=Succeeded`"
+    explanation: Correct. `status.phase` is a supported field selector for pods.
+  - id: d
+    text: "`kubectl get pods --sort-by=Succeeded`"
+    explanation: Sorting does not filter, and the value is not a field path.
+  correct_option: c
+  explanation: Field selectors filter on a few indexed fields per type. For pods,
+    `status.phase` is one of them.
+- id: ats028-030-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Extract a value with JSONPath
+  source_readings:
+  - sections/section-030/module-02/course-02-output-formats-sorting-and-resource-usage.md
+  prompt: You must print the image of the first container of the Deployment `beacon`
+    and nothing else. Which command does that?
+  options:
+  - id: a
+    text: "`kubectl get deployment beacon -o jsonpath='{.spec.template.spec.containers[0].image}'`"
+    explanation: Correct. The path walks the pod template of the Deployment to the
+      first container image.
+  - id: b
+    text: "`kubectl get deployment beacon -o wide | head -1`"
+    explanation: This prints the header line, not the image.
+  - id: c
+    text: "`kubectl get deployment beacon -o name`"
+    explanation: This prints only the resource name.
+  - id: d
+    text: "`kubectl get deployment beacon --sort-by=image`"
+    explanation: "`--sort-by` orders a list and does not print one field."
+  correct_option: a
+  explanation: "`-o jsonpath` prints the value at a path. For a Deployment, the image
+    is at `.spec.template.spec.containers[0].image`."
+- id: ats028-030-q07
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read a stuck rollout correctly
+  source_readings:
+  - sections/section-030/module-03/course-01-rollouts-revisions-and-rollback.md
+  prompt: A Deployment update uses an image tag that does not exist. After 10 minutes
+    the rollout is still not finished. What does the Deployment do on its own?
+  options:
+  - id: a
+    text: It rolls back to the previous revision.
+    explanation: A Deployment does not roll back automatically.
+  - id: b
+    text: It deletes the new ReplicaSet and keeps the old pods.
+    explanation: The ReplicaSet stays in the history.
+  - id: c
+    text: It sets the condition `Progressing=False` with the reason `ProgressDeadlineExceeded`
+      and keeps trying.
+    explanation: Correct. The default progress deadline is 600 seconds. The controller
+      reports the failure and does not roll back or stop.
+  - id: d
+    text: It scales the Deployment to zero.
+    explanation: A failed update does not change the replica count.
+  correct_option: c
+  explanation: "`spec.progressDeadlineSeconds` defaults to 600. After it passes, the
+    condition reports the failure, and a person must act."
+- id: ats028-030-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Restore a previous revision and keep the history
+  source_readings:
+  - sections/section-030/module-03/course-01-rollouts-revisions-and-rollback.md
+  prompt: The new revision of `dock` fails. You want the previous working template
+    back and the failed ReplicaSet to stay in the history. Which command does this?
+  options:
+  - id: a
+    text: "`kubectl delete deployment dock`"
+    explanation: This deletes the Deployment and its history.
+  - id: b
+    text: "`kubectl scale deployment dock --replicas=0`"
+    explanation: Scaling does not change the template.
+  - id: c
+    text: "`kubectl rollout pause deployment/dock`"
+    explanation: A pause stops further changes and does not restore a template.
+  - id: d
+    text: "`kubectl rollout undo deployment/dock`"
+    explanation: Correct. It makes the Deployment use the template of the previous
+      revision, and the failed ReplicaSet stays with zero pods.
+  correct_option: d
+  explanation: "`kubectl rollout undo` returns to the previous revision. History needs
+    a non-zero `revisionHistoryLimit`."
+- id: ats028-030-q09
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Interpret the limits of change-cause
+  source_readings:
+  - sections/section-030/module-03/course-01-rollouts-revisions-and-rollback.md
+  prompt: The `CHANGE-CAUSE` column of `kubectl rollout history` shows `update to
+    a new tag` for a revision. How reliable is that text as evidence of what the revision
+    contains?
+  options:
+  - id: a
+    text: It is text from the annotation `kubernetes.io/change-cause`, which a person
+      or a tool set. Read the revision with `--revision=N` to see the real template.
+    explanation: Correct. The annotation can be wrong or stale, and the revision shows
+      the facts.
+  - id: b
+    text: It is reliable, because Kubernetes writes it from the diff.
+    explanation: Kubernetes does not write it from the diff.
+  - id: c
+    text: It is signed by the API server and cannot be changed.
+    explanation: Anyone who can update the Deployment can change the annotation.
+  - id: d
+    text: It is only shown for revisions that were rolled back.
+    explanation: The column is shown for every revision.
+  correct_option: a
+  explanation: "`CHANGE-CAUSE` is a free text annotation. `kubectl rollout history
+    --revision=N` shows the pod template of that revision."
+- id: ats028-030-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Wait for a condition in a script
+  source_readings:
+  - sections/section-030/module-03/course-02-events-watching-and-waiting.md
+  prompt: A script applies a Deployment and must continue only when the Deployment
+    is available, and fail after 60 seconds otherwise. Which approach is correct?
+  options:
+  - id: a
+    text: "`sleep 60` and then continue."
+    explanation: A fixed sleep does not check anything and does not fail.
+  - id: b
+    text: "`kubectl wait --for=condition=Available deployment/NAME --timeout=60s`"
+    explanation: Correct. The command blocks until the condition is true and exits
+      with a non-zero code on timeout.
+  - id: c
+    text: "`kubectl get pods -w` and stop the script manually."
+    explanation: A watch does not decide a condition for a script.
+  - id: d
+    text: "`kubectl events --watch` and read the last line."
+    explanation: Events are not a condition of the object and can expire.
+  correct_option: b
+  explanation: "`kubectl wait` exits non-zero on timeout, so a script can use it as
+    a gate. `kubectl rollout status` does the same for rollouts."

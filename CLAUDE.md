@@ -205,7 +205,7 @@ The official objectives are listed in `astrona.yaml` and mapped in `CURRICULUM.m
 
 ### Playground and guided-practice scope
 
-On 2026-10-12 the maintainer requested CKAD playgrounds and hands-on teaching. This supersedes the earlier no-playgrounds instruction for CKAD. Add one ungraded environment per module and weave concrete practice into the reading order. Keep the existing YAML knowledge checks. No new graded labs or submission workflow are added in this scope.
+On 2026-10-12 the maintainer requested CKAD playgrounds and hands-on teaching. This supersedes the earlier no-playgrounds instruction for CKAD. Add one ungraded environment per module and weave concrete practice into the reading order. Keep the existing YAML knowledge checks. The 2026-10-13 maintainer request extends this scope to graded labs. Register each independent lab immediately after its teaching reading, with a task, solution, guarded bootstrap, reference repair and behavior grader. Keep technical pages draft until review.
 
 Playgrounds use the Astrona configuration contract, isolated kubeconfigs and bounded bootstrap waits. Do not write to unrelated clusters. Landing pages carry the playground launch marker, every practical reading renews it before the first step, and the final summary ends with the destroy marker. The shared writing and lifecycle guidance above applies to these environments.
 
@@ -247,3 +247,17 @@ Primary author sources are recorded in `SOURCES.md`. The objective list was
 verified on 2026-10-11. Detailed reading expansions were written on 2026-10-11.
 Validate manifest paths, summary ordering, curriculum coverage and question
 contracts. Record actual runtime evidence when available. Static validation is not live verification; do not invent command output.
+
+## Build status (ATS028)
+
+All five sections (010 to 050) are built: 16 modules, each with parts of at
+least 90 lines, a summary ending in `<!-- astrona:playground:destroy -->`, one
+playground and one graded lab (module 01 of section 020 has two). Each section
+has a capstone lab (`ats-028-capstone-0X0`, difficulty advanced) and a
+`quiz.yaml` with 10 questions. `sections/final-domain-quiz.yaml` has 25
+questions. `astrona.yaml` lists every reading, lab and quiz (`type: quiz`,
+`pass_score: 70`). Every lab and playground passed `astrona validate -c`, every
+script passed `bash -n` and every YAML file parses. No lab or playground has
+been run or tested yet: keep the UNTESTED status in the lab READMEs until
+`astrona test` has passed. The older `questions.yaml` files and the
+`assessments/` folder still exist next to the new quizzes.

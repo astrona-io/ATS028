@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Find And Migrate Removed API Versions (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-lab-010-02-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/python:3.13-alpine
+      - docker.io/library/busybox:1.37.0
+
+# Starting state: the running probe application and a ConfigMap that holds the
+# legacy manifests. The learner writes the supported definitions.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads and the legacy manifests
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: role-and-binding-migrated
+      description: The Role and RoleBinding exist in rbac.authorization.k8s.io/v1 and scout-reader can read pods
+      type: file
+      source: validation/validate-role-and-binding-migrated.sh
+      hint: Read role.yaml and rolebinding.yaml from the legacy-manifests ConfigMap, change apiVersion to rbac.authorization.k8s.io/v1 and apply both.
+    - name: least-privilege
+      description: scout-reader has read rights only
+      type: file
+      source: validation/validate-least-privilege.sh
+      hint: Keep the rules from the legacy file. Do not bind a broader role such as edit or cluster-admin.
+    - name: priorityclass-migrated
+      description: The PriorityClass fleet-critical exists with value 900000 and is not the global default
+      type: file
+      source: validation/validate-priorityclass-migrated.sh
+      hint: Read priorityclass.yaml, change apiVersion to scheduling.k8s.io/v1 and apply it.
+    - name: findings-recorded
+      description: The ConfigMap api-findings records the supported group and version of each resource
+      type: file
+      source: validation/validate-findings-recorded.sh
+      hint: Use kubectl api-resources or kubectl api-versions, then create the ConfigMap api-findings with the keys role, priorityclass and ingress.
+    - name: probe-still-serving
+      description: The probe application still answers through its Service
+      type: file
+      source: validation/validate-probe-still-serving.sh
+      hint: Do not change the probe Deployment or Service.
+
+teardown:
+  keepCluster: false

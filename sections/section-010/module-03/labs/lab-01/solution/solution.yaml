@@ -1,0 +1,68 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: probe-edge
+  namespace: starfleet
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: edge.starfleet.example
+    http:
+      paths:
+      - path: /status
+        pathType: Prefix
+        backend:
+          service:
+            name: probe
+            port:
+              number: 80
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: shuttle-sweep
+  namespace: starfleet
+spec:
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: sweep
+            image: docker.io/library/busybox:1.37.0
+            command: ["sh", "-c", "wget -q -T 3 -O- http://probe/"]
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: probe-scaler
+  namespace: starfleet
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: probe
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 55
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: probe-budget
+  namespace: starfleet
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: probe

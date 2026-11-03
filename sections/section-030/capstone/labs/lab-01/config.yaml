@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Monitoring And Inspection Capstone (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-capstone-030
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/python:3.13-alpine
+      - docker.io/library/busybox:1.37.0
+
+# The faults are left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads, the restarting pod and the stuck rollout
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: report-pods
+      description: fleet-report key prod-web-pods lists exactly the pods with tier=web and env=prod
+      type: file
+      source: validation/validate-report-pods.sh
+      hint: Combine two labels in one selector and print only names with -o name; remove the pod/ prefix.
+    - name: report-restarting-pod
+      description: fleet-report key restarting-pod names the pod that has restarted
+      type: file
+      source: validation/validate-report-restarting-pod.sh
+      hint: Sort the pods by .status.containerStatuses[0].restartCount or read the RESTARTS column.
+    - name: report-rollout
+      description: fleet-report records the failed image and the waiting reason of dock
+      type: file
+      source: validation/validate-report-rollout.sh
+      hint: Read the image from the pod template of the stuck revision and the reason from the pod status. Collect them before you roll back.
+    - name: dock-rolled-back
+      description: dock runs the previous image with 2 ready replicas, keeps its history and has a new change-cause
+      type: file
+      source: validation/validate-dock-rolled-back.sh
+      hint: Use kubectl rollout undo and then annotate the Deployment with kubernetes.io/change-cause.
+    - name: reviewed-labels
+      description: reviewed=true is on every pod with env=prod and on no other pod
+      type: file
+      source: validation/validate-reviewed-labels.sh
+      hint: kubectl label pods -l env=prod reviewed=true
+    - name: workloads-untouched
+      description: hail and keel are unchanged and keep 2 ready replicas
+      type: file
+      source: validation/validate-workloads-untouched.sh
+      hint: Change only dock.
+
+teardown:
+  keepCluster: false

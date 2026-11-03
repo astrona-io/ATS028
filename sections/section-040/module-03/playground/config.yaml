@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Logging Architecture And Sidecars (PLAYGROUND). Ungraded environment: it starts, applies the
+# starting manifests and stays running. No task and no `astrona submit`.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-playground-040-03
+  docs:
+    guide: docs/overview.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/busybox:1.37.0
+
+bootstrap:
+  manifests:
+    - name: environment
+      type: file
+      source: manifests/environment.yaml
+  waitFor:
+    - resource: deploy/stdout-app
+      namespace: starfleet
+    - resource: deploy/file-app
+      namespace: starfleet
+    - resource: deploy/sidecar-app
+      namespace: starfleet
+
+teardown:
+  keepCluster: false

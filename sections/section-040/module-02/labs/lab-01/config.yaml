@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Read Logs From Multi-Container And Crashing Pods (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-lab-040-02-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/busybox:1.37.0
+
+# The faults are left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads and the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: audit-code
+      description: "The ConfigMap log-findings key audit-code holds the code printed by the audit container"
+      type: file
+      source: validation/validate-audit-code.sh
+      hint: "Read the log of the audit container only: kubectl -n starfleet logs deploy/ledger -c audit. The api container prints different lines."
+    - name: fuse-key
+      description: "The ConfigMap log-findings key fuse-key holds the variable named in the previous log of the fuse pod"
+      type: file
+      source: validation/validate-fuse-key.sh
+      hint: "The fuse container restarts. Use kubectl -n starfleet logs <pod> --previous to read the run that already ended."
+    - name: containers-and-pods
+      description: "The ConfigMap log-findings keys containers and pods match the ledger pods"
+      type: file
+      source: validation/validate-containers-and-pods.sh
+      hint: "List the container names with kubectl get pods -l app=ledger -o jsonpath and count the pods with the same label selector."
+    - name: workloads-unchanged
+      description: "The ledger and fuse Deployments are not deleted or changed"
+      type: file
+      source: validation/validate-workloads-unchanged.sh
+      hint: "The task only reads logs. Do not delete or edit the Deployments."
+
+teardown:
+  keepCluster: false

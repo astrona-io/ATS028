@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# API Deprecations Capstone (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-capstone-010
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/python:3.13-alpine
+      - docker.io/library/busybox:1.37.0
+
+# Starting state: the relay Service without pods, a client pod and a ConfigMap
+# that holds four legacy manifests. The learner writes the supported definitions.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the namespace, the Service, the client and the legacy manifests
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: relay-deployment
+      description: Deployment relay is served by apps/v1 with an explicit selector and 2 ready replicas
+      type: file
+      source: validation/validate-relay-deployment.sh
+      hint: In apps/v1 spec.selector is required and must match the pod template labels.
+    - name: cronjob-migrated
+      description: CronJob beacon-sweep is served by batch/v1 with its schedule and policy kept
+      type: file
+      source: validation/validate-cronjob-migrated.sh
+      hint: Change apiVersion to batch/v1 and keep every other field.
+    - name: pdb-migrated
+      description: PodDisruptionBudget relay-budget is served by policy/v1 and selects the relay pods
+      type: file
+      source: validation/validate-pdb-migrated.sh
+      hint: Change apiVersion to policy/v1 and keep maxUnavailable and the selector.
+    - name: hpa-migrated
+      description: HorizontalPodAutoscaler relay-scaler is served by autoscaling/v2
+      type: file
+      source: validation/validate-hpa-migrated.sh
+      hint: Change apiVersion to autoscaling/v2. The metric block already uses the v2 shape.
+    - name: api-audit
+      description: ConfigMap api-audit records the served group and version for each kind
+      type: file
+      source: validation/validate-api-audit.sh
+      hint: Read the versions with kubectl api-resources and kubectl api-versions; do not copy them from the legacy files.
+    - name: relay-serving
+      description: The relay Service has 2 ready endpoints and answers the drifter pod
+      type: file
+      source: validation/validate-relay-serving.sh
+      hint: The Service selects pods with the label app=relay; wait for the Deployment to be ready.
+    - name: legacy-bundle-unchanged
+      description: The legacy-bundle and probe-code ConfigMaps are unchanged
+      type: file
+      source: validation/validate-legacy-bundle-unchanged.sh
+      hint: Write new files; do not edit or delete the ConfigMaps in the namespace.
+
+teardown:
+  keepCluster: false

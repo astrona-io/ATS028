@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: starfleet
+  labels:
+    project: ckad
+---
+# Writes to standard output. The container runtime captures it.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stdout-app
+  namespace: starfleet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stdout-app
+  template:
+    metadata:
+      labels:
+        app: stdout-app
+    spec:
+      containers:
+        - name: app
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'while true; do echo "$(date +%T) stdout-event"; sleep 3; done'
+---
+# Writes only to a file. kubectl logs shows nothing for this container.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-app
+  namespace: starfleet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-app
+  template:
+    metadata:
+      labels:
+        app: file-app
+    spec:
+      containers:
+        - name: app
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'mkdir -p /var/log/app; while true; do echo "$(date +%T) file-event" >> /var/log/app/app.log; sleep 3; done'
+---
+# The same file writer with a sidecar that prints the file to standard output.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidecar-app
+  namespace: starfleet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidecar-app
+  template:
+    metadata:
+      labels:
+        app: sidecar-app
+    spec:
+      containers:
+        - name: app
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'while true; do echo "$(date +%T) sidecar-event" >> /var/log/app/app.log; sleep 3; done'
+          volumeMounts:
+            - name: logs
+              mountPath: /var/log/app
+        - name: log-tail
+          image: docker.io/library/busybox:1.37.0
+          command: ["sh", "-c", "touch /var/log/app/app.log; tail -n+1 -F /var/log/app/app.log"]
+          volumeMounts:
+            - name: logs
+              mountPath: /var/log/app
+              readOnly: false
+      volumes:
+        - name: logs
+          emptyDir: {}

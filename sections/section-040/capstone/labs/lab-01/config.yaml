@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Utilize Container Logs Capstone (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-capstone-040
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/busybox:1.37.0
+
+# The faults are left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads and the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: audit-code
+      description: log-report key audit-code is the error code that the audit container prints
+      type: file
+      source: validation/validate-audit-code.sh
+      hint: Read only the audit container of the manifest Deployment with -c audit.
+    - name: valve-key
+      description: log-report key valve-key is the variable named in the previous log of valve
+      type: file
+      source: validation/validate-valve-key.sh
+      hint: The container of valve stops quickly; read its previous run with --previous.
+    - name: pods-and-containers
+      description: log-report keys pods and containers match the manifest Deployment
+      type: file
+      source: validation/validate-pods-and-containers.sh
+      hint: Count pods with the label app=manifest and list the container names sorted, separated by commas.
+    - name: sidecar-running
+      description: The gauge pod runs two ready containers and one is named log-tail
+      type: file
+      source: validation/validate-sidecar-running.sh
+      hint: Add a container named log-tail to the pod template of the Deployment gauge.
+    - name: shared-volume
+      description: Both containers mount the same emptyDir volume at /var/log/gauge and log-tail mounts it read-only
+      type: file
+      source: validation/validate-shared-volume.sh
+      hint: Add an emptyDir volume and mount it in both containers; set readOnly true in log-tail.
+    - name: sidecar-streams-log
+      description: The log of log-tail contains the gauge-reading lines
+      type: file
+      source: validation/validate-sidecar-streams-log.sh
+      hint: Run tail -n+1 -F on /var/log/gauge/gauge.log in the sidecar.
+    - name: workloads-unchanged
+      description: The writer, manifest and valve workloads keep their images and the manifest Deployment keeps 3 replicas
+      type: file
+      source: validation/validate-workloads-unchanged.sh
+      hint: Do not change the writer container or the other Deployments.
+
+teardown:
+  keepCluster: false

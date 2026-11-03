@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Fix And Add Probe Handlers (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-lab-020-02-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/python:3.13-alpine
+      - docker.io/library/busybox:1.37.0
+
+# The faults are left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads and the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: beacon-ready
+      description: The beacon Deployment has 2 ready replicas
+      type: file
+      source: validation/validate-beacon-ready.sh
+      hint: Read the Unhealthy events with kubectl describe pod. Fix the readiness path and the liveness port.
+    - name: beacon-probes-kept
+      description: beacon keeps both probes and they target the working endpoints
+      type: file
+      source: validation/validate-beacon-probes-kept.sh
+      hint: Do not delete the probes. Use path /ready for readiness and a probe on container port 8080 for liveness.
+    - name: beacon-stable
+      description: The running beacon pods have not restarted
+      type: file
+      source: validation/validate-beacon-stable.sh
+      hint: After the fix the new pods must start cleanly. Wait for the rollout to finish.
+    - name: scout-exec-probe
+      description: scout has an exec readiness probe that checks the application and the pod is ready
+      type: file
+      source: validation/validate-scout-exec-probe.sh
+      hint: Add readinessProbe.exec.command to the scout container, for example sh -c with wget against http://127.0.0.1:8080/ready.
+    - name: scout-still-serving
+      description: The scout Service still answers through its endpoints
+      type: file
+      source: validation/validate-scout-still-serving.sh
+      hint: Do not change labels, ports or the Service. Only add the probe.
+
+teardown:
+  keepCluster: false

@@ -36,7 +36,7 @@ modules:
   title: Understand API deprecations
   description: Developed explanations and application reasoning for Understand API
     deprecations.
-  maturity: alpha
+  status: alpha
   content:
   - type: reading
     title: Understand API deprecations
@@ -47,6 +47,9 @@ modules:
   - type: reading
     title: Recognizing Deprecated APIs And Migrating Definitions
     path: sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  - type: reading
+    title: Discover A Served API And Reject A Removed Definition
+    path: sections/section-010/module-01/course-02-guided-practice.md
   - type: reading
     title: Migrate A Removed Deployment API — Task
     path: sections/section-010/module-01/labs/lab-01/question.md
@@ -67,16 +70,98 @@ modules:
     title: Migrate A Removed Deployment API — Solution
     path: sections/section-010/module-01/labs/lab-01/solution.md
   - type: reading
-    title: Discover A Served API And Reject A Removed Definition
-    path: sections/section-010/module-01/course-02-guided-practice.md
-  - type: reading
     title: Summary
     path: sections/section-010/module-01/course-03-summary.md
+  - type: reading
+    title: Deprecation Policy, Warnings And Detection
+    path: sections/section-010/module-02/course.md
+  - type: reading
+    title: Deprecation Policy And Server Signals
+    path: sections/section-010/module-02/course-01-deprecation-policy-and-server-signals.md
+  - type: reading
+    title: Finding Deprecated API Use And Converting Definitions
+    path: sections/section-010/module-02/course-02-finding-deprecated-api-use-and-converting-definitions.md
+  - type: reading
+    title: Migrate Role, RoleBinding And PriorityClass Definitions — Task
+    path: sections/section-010/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Migrate Role, RoleBinding And PriorityClass Definitions
+    path: sections/section-010/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: migrate-role-rolebinding-and-priorityclass-definitions
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Migrate Role, RoleBinding And PriorityClass Definitions.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Migrate Role, RoleBinding And PriorityClass Definitions — Solution
+    path: sections/section-010/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-010/module-02/course-03-summary.md
+  - type: reading
+    title: Migrating Ingress, CronJob, HorizontalPodAutoscaler And PodDisruptionBudget
+      Definitions
+    path: sections/section-010/module-03/course.md
+  - type: reading
+    title: Migrating Ingress And CronJob Definitions
+    path: sections/section-010/module-03/course-01-migrating-ingress-and-cronjob-definitions.md
+  - type: reading
+    title: Migrating HorizontalPodAutoscaler And PodDisruptionBudget Definitions
+    path: sections/section-010/module-03/course-02-migrating-horizontalpodautoscaler-and-poddisruptionbudget-definitions.md
+  - type: reading
+    title: Migrate Ingress, CronJob, HorizontalPodAutoscaler And PodDisruptionBudget
+      — Task
+    path: sections/section-010/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Migrate Ingress, CronJob, HorizontalPodAutoscaler And PodDisruptionBudget
+    path: sections/section-010/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: migrate-ingress-cronjob-horizontalpodautoscaler-and-poddisruptionbudget
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Migrate Ingress, CronJob, HorizontalPodAutoscaler And PodDisruptionBudget.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Migrate Ingress, CronJob, HorizontalPodAutoscaler And PodDisruptionBudget
+      — Solution
+    path: sections/section-010/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-010/module-03/course-03-summary.md
+  - type: reading
+    title: Migrate An Old Release To The Supported APIs — Task
+    path: sections/section-010/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Migrate An Old Release To The Supported APIs
+    path: sections/section-010/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 40m
+    topic: capstone-010
+    task_kind: troubleshooting
+    learning_goals:
+    - Combine the skills of the section in one multi-requirement task.
+    tags:
+    - ckad
+    - capstone
+  - type: reading
+    title: Migrate An Old Release To The Supported APIs — Solution
+    path: sections/section-010/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: 'Knowledge Check: Understand API deprecations'
+    path: sections/section-010/quiz.yaml
+    pass_score: 70
 - id: module-020
   title: Implement probes and health checks
   description: Developed explanations and application reasoning for Implement probes
     and health checks.
-  maturity: alpha
+  status: alpha
   content:
   - type: reading
     title: Implement probes and health checks
@@ -87,6 +172,9 @@ modules:
   - type: reading
     title: Designing Startup, Readiness And Liveness Checks
     path: sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
+  - type: reading
+    title: Distinguish Readiness Removal From Liveness Restart
+    path: sections/section-020/module-01/course-02-guided-practice.md
   - type: reading
     title: Repair Readiness Without Removing It — Task
     path: sections/section-020/module-01/labs/lab-01/question.md
@@ -124,16 +212,95 @@ modules:
     title: Repair A Liveness Probe Port — Solution
     path: sections/section-020/module-01/labs/lab-02/solution.md
   - type: reading
-    title: Distinguish Readiness Removal From Liveness Restart
-    path: sections/section-020/module-01/course-02-guided-practice.md
-  - type: reading
     title: Summary
     path: sections/section-020/module-01/course-03-summary.md
+  - type: reading
+    title: 'Probe Handlers: HTTP, TCP, Exec And gRPC'
+    path: sections/section-020/module-02/course.md
+  - type: reading
+    title: HTTP And TCP Probes
+    path: sections/section-020/module-02/course-01-http-and-tcp-probes.md
+  - type: reading
+    title: Exec And gRPC Probes
+    path: sections/section-020/module-02/course-02-exec-and-grpc-probes.md
+  - type: reading
+    title: Fix And Add Probe Handlers — Task
+    path: sections/section-020/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Fix And Add Probe Handlers
+    path: sections/section-020/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: fix-and-add-probe-handlers
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Fix And Add Probe Handlers.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Fix And Add Probe Handlers — Solution
+    path: sections/section-020/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-020/module-02/course-03-summary.md
+  - type: reading
+    title: Probe Timing And Startup Probes
+    path: sections/section-020/module-03/course.md
+  - type: reading
+    title: Probe Timing Fields
+    path: sections/section-020/module-03/course-01-probe-timing-fields.md
+  - type: reading
+    title: Startup Probes
+    path: sections/section-020/module-03/course-02-startup-probes.md
+  - type: reading
+    title: Size A Startup Probe — Task
+    path: sections/section-020/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Size A Startup Probe
+    path: sections/section-020/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: size-a-startup-probe
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Size A Startup Probe.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Size A Startup Probe — Solution
+    path: sections/section-020/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-020/module-03/course-03-summary.md
+  - type: reading
+    title: Repair And Add Probes On Three Workloads — Task
+    path: sections/section-020/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Repair And Add Probes On Three Workloads
+    path: sections/section-020/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 40m
+    topic: capstone-020
+    task_kind: troubleshooting
+    learning_goals:
+    - Combine the skills of the section in one multi-requirement task.
+    tags:
+    - ckad
+    - capstone
+  - type: reading
+    title: Repair And Add Probes On Three Workloads — Solution
+    path: sections/section-020/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: 'Knowledge Check: Implement probes and health checks'
+    path: sections/section-020/quiz.yaml
+    pass_score: 70
 - id: module-030
   title: Use built-in CLI tools to monitor Kubernetes applications
   description: Developed explanations and application reasoning for Use built-in CLI
     tools to monitor Kubernetes applications.
-  maturity: alpha
+  status: alpha
   content:
   - type: reading
     title: Use built-in CLI tools to monitor Kubernetes applications
@@ -144,6 +311,9 @@ modules:
   - type: reading
     title: Choosing Diagnostic Evidence With kubectl
     path: sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
+  - type: reading
+    title: Combine Resource Status, Events And Live Metrics
+    path: sections/section-030/module-01/course-02-guided-practice.md
   - type: reading
     title: Capture Live Pod Metrics — Task
     path: sections/section-030/module-01/labs/lab-01/question.md
@@ -163,16 +333,95 @@ modules:
     title: Capture Live Pod Metrics — Solution
     path: sections/section-030/module-01/labs/lab-01/solution.md
   - type: reading
-    title: Combine Resource Status, Events And Live Metrics
-    path: sections/section-030/module-01/course-02-guided-practice.md
-  - type: reading
     title: Summary
     path: sections/section-030/module-01/course-03-summary.md
+  - type: reading
+    title: Selecting And Shaping kubectl Output
+    path: sections/section-030/module-02/course.md
+  - type: reading
+    title: Label And Field Selectors
+    path: sections/section-030/module-02/course-01-label-and-field-selectors.md
+  - type: reading
+    title: Output Formats, Sorting And Resource Usage
+    path: sections/section-030/module-02/course-02-output-formats-sorting-and-resource-usage.md
+  - type: reading
+    title: Select Workloads And Record What You Find — Task
+    path: sections/section-030/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Select Workloads And Record What You Find
+    path: sections/section-030/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: select-workloads-and-record-what-you-find
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Select Workloads And Record What You Find.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Select Workloads And Record What You Find — Solution
+    path: sections/section-030/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-030/module-02/course-03-summary.md
+  - type: reading
+    title: Rollouts, Events And Watching Change
+    path: sections/section-030/module-03/course.md
+  - type: reading
+    title: Rollouts, Revisions And Rollback
+    path: sections/section-030/module-03/course-01-rollouts-revisions-and-rollback.md
+  - type: reading
+    title: Events, Watching And Waiting
+    path: sections/section-030/module-03/course-02-events-watching-and-waiting.md
+  - type: reading
+    title: Diagnose And Roll Back A Stuck Rollout — Task
+    path: sections/section-030/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Diagnose And Roll Back A Stuck Rollout
+    path: sections/section-030/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: diagnose-and-roll-back-a-stuck-rollout
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Diagnose And Roll Back A Stuck Rollout.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Diagnose And Roll Back A Stuck Rollout — Solution
+    path: sections/section-030/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-030/module-03/course-03-summary.md
+  - type: reading
+    title: Inspect A Fleet And Roll Back A Failed Update — Task
+    path: sections/section-030/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Inspect A Fleet And Roll Back A Failed Update
+    path: sections/section-030/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 40m
+    topic: capstone-030
+    task_kind: troubleshooting
+    learning_goals:
+    - Combine the skills of the section in one multi-requirement task.
+    tags:
+    - ckad
+    - capstone
+  - type: reading
+    title: Inspect A Fleet And Roll Back A Failed Update — Solution
+    path: sections/section-030/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: 'Knowledge Check: Use built-in CLI tools to monitor Kubernetes applications'
+    path: sections/section-030/quiz.yaml
+    pass_score: 70
 - id: module-040
   title: Utilize container logs
   description: Developed explanations and application reasoning for Utilize container
     logs.
-  maturity: alpha
+  status: alpha
   content:
   - type: reading
     title: Utilize container logs
@@ -186,6 +435,9 @@ modules:
   - type: reading
     title: Selecting The Right Container Log And Time Window
     path: sections/section-040/module-01/course-02-selecting-the-right-container-log-and-time-window.md
+  - type: reading
+    title: Read Current And Previous Container Logs
+    path: sections/section-040/module-01/course-03-guided-practice.md
   - type: reading
     title: Diagnose A Previous Container Exit — Task
     path: sections/section-040/module-01/labs/lab-01/question.md
@@ -205,15 +457,94 @@ modules:
     title: Diagnose A Previous Container Exit — Solution
     path: sections/section-040/module-01/labs/lab-01/solution.md
   - type: reading
-    title: Read Current And Previous Container Logs
-    path: sections/section-040/module-01/course-03-guided-practice.md
-  - type: reading
     title: Summary
     path: sections/section-040/module-01/course-04-summary.md
+  - type: reading
+    title: Multi-Container And Multi-Pod Logs
+    path: sections/section-040/module-02/course.md
+  - type: reading
+    title: Choosing The Container And The Pod
+    path: sections/section-040/module-02/course-01-choosing-the-container-and-the-pod.md
+  - type: reading
+    title: Limiting, Timing And Following Logs
+    path: sections/section-040/module-02/course-02-limiting-timing-and-following-logs.md
+  - type: reading
+    title: Read Logs From Multi-Container And Crashing Pods — Task
+    path: sections/section-040/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Read Logs From Multi-Container And Crashing Pods
+    path: sections/section-040/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: read-logs-from-multi-container-and-crashing-pods
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Read Logs From Multi-Container And Crashing Pods.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Read Logs From Multi-Container And Crashing Pods — Solution
+    path: sections/section-040/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-040/module-02/course-03-summary.md
+  - type: reading
+    title: Logging Architecture And Sidecars
+    path: sections/section-040/module-03/course.md
+  - type: reading
+    title: From Container Output To Node Log Files
+    path: sections/section-040/module-03/course-01-from-container-output-to-node-log-files.md
+  - type: reading
+    title: Node-Level Logging And The Sidecar Pattern
+    path: sections/section-040/module-03/course-02-node-level-logging-and-the-sidecar-pattern.md
+  - type: reading
+    title: Ship A File Log To Standard Output With A Sidecar — Task
+    path: sections/section-040/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Ship A File Log To Standard Output With A Sidecar
+    path: sections/section-040/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: ship-a-file-log-to-standard-output-with-a-sidecar
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Ship A File Log To Standard Output With A Sidecar.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Ship A File Log To Standard Output With A Sidecar — Solution
+    path: sections/section-040/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-040/module-03/course-03-summary.md
+  - type: reading
+    title: Read Container Logs And Add A Log Sidecar — Task
+    path: sections/section-040/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Read Container Logs And Add A Log Sidecar
+    path: sections/section-040/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 40m
+    topic: capstone-040
+    task_kind: troubleshooting
+    learning_goals:
+    - Combine the skills of the section in one multi-requirement task.
+    tags:
+    - ckad
+    - capstone
+  - type: reading
+    title: Read Container Logs And Add A Log Sidecar — Solution
+    path: sections/section-040/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: 'Knowledge Check: Utilize container logs'
+    path: sections/section-040/quiz.yaml
+    pass_score: 70
 - id: module-050
   title: Debugging in Kubernetes
   description: Developed explanations and application reasoning for Debugging in Kubernetes.
-  maturity: alpha
+  status: alpha
   content:
   - type: reading
     title: Debugging in Kubernetes
@@ -224,6 +555,12 @@ modules:
   - type: reading
     title: Placement And Dependency Evidence
     path: sections/section-050/module-01/course-01-placement-and-dependency-evidence.md
+  - type: reading
+    title: Image Preparation And Container Startup
+    path: sections/section-050/module-01/course-02-image-preparation-and-container-startup.md
+  - type: reading
+    title: Locate Pending Placement And Repair A Node Selector
+    path: sections/section-050/module-01/course-03-guided-practice.md
   - type: reading
     title: Repair An Impossible Node Selector — Task
     path: sections/section-050/module-01/labs/lab-01/question.md
@@ -244,12 +581,6 @@ modules:
     title: Repair An Impossible Node Selector — Solution
     path: sections/section-050/module-01/labs/lab-01/solution.md
   - type: reading
-    title: Image Preparation And Container Startup
-    path: sections/section-050/module-01/course-02-image-preparation-and-container-startup.md
-  - type: reading
-    title: Locate Pending Placement And Repair A Node Selector
-    path: sections/section-050/module-01/course-03-guided-practice.md
-  - type: reading
     title: Summary
     path: sections/section-050/module-01/course-04-summary.md
   - type: reading
@@ -259,12 +590,18 @@ modules:
     title: Configuration, Dependencies And Request Failures
     path: sections/section-050/module-02/course-01-configuration-dependencies-and-request-failures.md
   - type: reading
+    title: Tracing A Service Request
+    path: sections/section-050/module-02/course-02-tracing-a-service-request.md
+  - type: reading
+    title: Repair A Missing Configuration Dependency
+    path: sections/section-050/module-02/course-03-guided-practice.md
+  - type: reading
     title: Restore A Missing ConfigMap Dependency — Task
     path: sections/section-050/module-02/labs/lab-01/question.md
   - type: lab
     title: Restore A Missing ConfigMap Dependency
     path: sections/section-050/module-02/labs/lab-01
-    difficulty: beginner
+    difficulty: intermediate
     estimated_duration: 20m
     topic: configmap
     task_kind: troubleshooting
@@ -278,11 +615,91 @@ modules:
     title: Restore A Missing ConfigMap Dependency — Solution
     path: sections/section-050/module-02/labs/lab-01/solution.md
   - type: reading
-    title: Tracing A Service Request
-    path: sections/section-050/module-02/course-02-tracing-a-service-request.md
-  - type: reading
-    title: Repair A Missing Configuration Dependency
-    path: sections/section-050/module-02/course-03-guided-practice.md
-  - type: reading
     title: Summary
     path: sections/section-050/module-02/course-04-summary.md
+  - type: reading
+    title: Debugging Running Pods With exec, port-forward And debug
+    path: sections/section-050/module-03/course.md
+  - type: reading
+    title: Running Commands And Tunnels With exec And port-forward
+    path: sections/section-050/module-03/course-01-running-commands-and-tunnels-with-exec-and-port-forward.md
+  - type: reading
+    title: Ephemeral Containers And File Copy
+    path: sections/section-050/module-03/course-02-ephemeral-containers-and-file-copy.md
+  - type: reading
+    title: Inspect A Running Pod And Correct Its Service — Task
+    path: sections/section-050/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Inspect A Running Pod And Correct Its Service
+    path: sections/section-050/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: inspect-a-running-pod-and-correct-its-service
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Inspect A Running Pod And Correct Its Service.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Inspect A Running Pod And Correct Its Service — Solution
+    path: sections/section-050/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-050/module-03/course-03-summary.md
+  - type: reading
+    title: Diagnosing Failing Workloads From Status To Cause
+    path: sections/section-050/module-04/course.md
+  - type: reading
+    title: Reading Status And Events To Find The Failed Stage
+    path: sections/section-050/module-04/course-01-reading-status-and-events-to-find-the-failed-stage.md
+  - type: reading
+    title: Resource Limits, Exit Codes And Service Endpoints
+    path: sections/section-050/module-04/course-02-resource-limits-exit-codes-and-service-endpoints.md
+  - type: reading
+    title: Diagnose And Repair Five Failing Workloads — Task
+    path: sections/section-050/module-04/labs/lab-01/question.md
+  - type: lab
+    title: Diagnose And Repair Five Failing Workloads
+    path: sections/section-050/module-04/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: diagnose-and-repair-five-failing-workloads
+    task_kind: troubleshooting
+    learning_goals:
+    - 'Complete the task: Diagnose And Repair Five Failing Workloads.'
+    tags:
+    - ckad
+    - troubleshooting
+  - type: reading
+    title: Diagnose And Repair Five Failing Workloads — Solution
+    path: sections/section-050/module-04/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-050/module-04/course-03-summary.md
+  - type: reading
+    title: Debug A Release With Three Problems — Task
+    path: sections/section-050/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Debug A Release With Three Problems
+    path: sections/section-050/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 40m
+    topic: capstone-050
+    task_kind: troubleshooting
+    learning_goals:
+    - Combine the skills of the section in one multi-requirement task.
+    tags:
+    - ckad
+    - capstone
+  - type: reading
+    title: Debug A Release With Three Problems — Solution
+    path: sections/section-050/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: 'Knowledge Check: Debugging in Kubernetes'
+    path: sections/section-050/quiz.yaml
+    pass_score: 70
+  - type: quiz
+    title: 'Final Knowledge Check: Application Observability and Maintenance'
+    path: sections/final-domain-quiz.yaml
+    pass_score: 70

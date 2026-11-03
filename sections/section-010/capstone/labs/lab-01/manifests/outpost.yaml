@@ -1,0 +1,155 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: outpost
+  labels:
+    project: outpost
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: probe-code
+  namespace: outpost
+data:
+  server.py: |
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    from pathlib import Path
+    import os
+    import socket
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            marker = {"/ready": "/tmp/not-ready", "/health": "/tmp/unhealthy"}.get(self.path)
+            status = 503 if marker and Path(marker).exists() else 200
+            settings = Path("/settings/greeting")
+            greeting = settings.read_text().strip() if settings.exists() else os.getenv("GREETING", "hello")
+            body = f"version={os.getenv('VERSION', 'v1')} host={socket.gethostname()} greeting={greeting}\n"
+            self.send_response(status)
+            self.send_header("Content-Type", "text/plain")
+            self.end_headers()
+            self.wfile.write(body.encode())
+
+    HTTPServer(("0.0.0.0", 8080), Handler).serve_forever()
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: legacy-bundle
+  namespace: outpost
+data:
+  deployment.yaml: |
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    metadata:
+      name: relay
+      namespace: outpost
+    spec:
+      replicas: 2
+      template:
+        metadata:
+          labels:
+            app: relay
+        spec:
+          containers:
+          - name: relay
+            image: docker.io/library/python:3.13-alpine
+            command:
+            - python
+            - /app/server.py
+            ports:
+            - name: http
+              containerPort: 8080
+            readinessProbe:
+              httpGet:
+                path: /ready
+                port: http
+              periodSeconds: 2
+            volumeMounts:
+            - name: app
+              mountPath: /app
+              readOnly: true
+          volumes:
+          - name: app
+            configMap:
+              name: probe-code
+  cronjob.yaml: |
+    apiVersion: batch/v1beta1
+    kind: CronJob
+    metadata:
+      name: beacon-sweep
+      namespace: outpost
+    spec:
+      schedule: "*/15 * * * *"
+      concurrencyPolicy: Replace
+      failedJobsHistoryLimit: 3
+      jobTemplate:
+        spec:
+          template:
+            spec:
+              restartPolicy: OnFailure
+              containers:
+              - name: sweep
+                image: docker.io/library/busybox:1.37.0
+                command: ["sh", "-c", "wget -q -T 3 -O- http://relay/"]
+  pdb.yaml: |
+    apiVersion: policy/v1beta1
+    kind: PodDisruptionBudget
+    metadata:
+      name: relay-budget
+      namespace: outpost
+    spec:
+      maxUnavailable: 1
+      selector:
+        matchLabels:
+          app: relay
+  hpa.yaml: |
+    apiVersion: autoscaling/v2beta2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: relay-scaler
+      namespace: outpost
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: relay
+      minReplicas: 2
+      maxReplicas: 6
+      metrics:
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 60
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: relay
+  namespace: outpost
+spec:
+  selector:
+    app: relay
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drifter
+  namespace: outpost
+  labels:
+    app: drifter
+spec:
+  restartPolicy: Never
+  containers:
+  - name: client
+    image: docker.io/library/busybox:1.37.0
+    command:
+    - sh
+    - "-c"
+    - sleep 3600

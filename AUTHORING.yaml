@@ -1,5 +1,6 @@
 version: 1
-approval: CKAD playgrounds and guided practice requested 2026-10-12; no new graded labs.
+approval: Maintainer requested continued CKAD playground and graded lab development
+  on 2026-10-13, extending the 2026-10-12 playground scope.
 course:
   id: ATS028
   certification:
@@ -39,7 +40,7 @@ sections:
     - Recognizing Deprecated APIs And Migrating Definitions
     - Discover A Served API And Reject A Removed Definition
     playground: true
-    module_lab: false
+    module_lab: true
     sources:
     - reading: sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
       adapted_from: null
@@ -47,6 +48,14 @@ sections:
       adapted_from: null
     practice_readings:
     - sections/section-010/module-01/course-02-guided-practice.md
+    labs:
+    - id: lab-01
+      path: sections/section-010/module-01/labs/lab-01
+      after_reading: sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+      objective: Apply a supported Deployment API with a matching selector and preserved
+        application behavior.
+      status: draft
+      runtime_verification: pending
 - id: section-020
   title: Implement probes and health checks
   curriculum_item: Implement probes and health checks
@@ -64,7 +73,7 @@ sections:
     - Designing Startup, Readiness And Liveness Checks
     - Distinguish Readiness Removal From Liveness Restart
     playground: true
-    module_lab: false
+    module_lab: true
     sources:
     - reading: sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
       adapted_from: null
@@ -72,6 +81,20 @@ sections:
       adapted_from: null
     practice_readings:
     - sections/section-020/module-01/course-02-guided-practice.md
+    labs:
+    - id: lab-01
+      path: sections/section-020/module-01/labs/lab-01
+      after_reading: sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
+      objective: Restore endpoint eligibility by repairing a readiness probe port.
+      status: draft
+      runtime_verification: pending
+    - id: lab-02
+      path: sections/section-020/module-01/labs/lab-02
+      after_reading: sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
+      objective: Restore a valid health check while retaining restart protection and
+        readiness.
+      status: draft
+      runtime_verification: pending
 - id: section-030
   title: Use built-in CLI tools to monitor Kubernetes applications
   curriculum_item: Use built-in CLI tools to monitor Kubernetes applications
@@ -89,7 +112,7 @@ sections:
     - Choosing Diagnostic Evidence With kubectl
     - Combine Resource Status, Events And Live Metrics
     playground: true
-    module_lab: false
+    module_lab: true
     sources:
     - reading: sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
       adapted_from: null
@@ -97,6 +120,13 @@ sections:
       adapted_from: null
     practice_readings:
     - sections/section-030/module-01/course-02-guided-practice.md
+    labs:
+    - id: lab-01
+      path: sections/section-030/module-01/labs/lab-01
+      after_reading: sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
+      objective: Combine ready workload state with a recent metrics API measurement.
+      status: draft
+      runtime_verification: pending
 - id: section-040
   title: Utilize container logs
   curriculum_item: Utilize container logs
@@ -115,7 +145,7 @@ sections:
     - Selecting The Right Container Log And Time Window
     - Read Current And Previous Container Logs
     playground: true
-    module_lab: false
+    module_lab: true
     sources:
     - reading: sections/section-040/module-01/course-01-logs-exits-and-crash-loops.md
       adapted_from: ATS039/sections/section-020/module-01/course-01-logs-exits-and-crash-loops.md
@@ -125,6 +155,14 @@ sections:
       adapted_from: null
     practice_readings:
     - sections/section-040/module-01/course-03-guided-practice.md
+    labs:
+    - id: lab-01
+      path: sections/section-040/module-01/labs/lab-01
+      after_reading: sections/section-040/module-01/course-02-selecting-the-right-container-log-and-time-window.md
+      objective: Select the previous container log and record the corresponding exit
+        evidence.
+      status: draft
+      runtime_verification: pending
 - id: section-050
   title: Debugging in Kubernetes
   curriculum_item: Debugging in Kubernetes
@@ -143,7 +181,7 @@ sections:
     - Image Preparation And Container Startup
     - Locate Pending Placement And Repair A Node Selector
     playground: true
-    module_lab: false
+    module_lab: true
     sources:
     - reading: sections/section-050/module-01/course-01-placement-and-dependency-evidence.md
       adapted_from: ATS038/sections/section-030/module-01/course-01-placement-and-dependency-evidence.md
@@ -153,6 +191,14 @@ sections:
       adapted_from: null
     practice_readings:
     - sections/section-050/module-01/course-03-guided-practice.md
+    labs:
+    - id: lab-01
+      path: sections/section-050/module-01/labs/lab-01
+      after_reading: sections/section-050/module-01/course-01-placement-and-dependency-evidence.md
+      objective: Use node labels and scheduling evidence to correct an unsatisfiable
+        placement rule.
+      status: draft
+      runtime_verification: pending
   - id: module-02
     title: Application Dependencies And Focused Correction
     objectives:
@@ -165,7 +211,7 @@ sections:
     - Tracing A Service Request
     - Repair A Missing Configuration Dependency
     playground: true
-    module_lab: false
+    module_lab: true
     sources:
     - reading: sections/section-050/module-02/course-01-configuration-dependencies-and-request-failures.md
       adapted_from: ATS039/sections/section-020/module-01/course-02-configuration-dependencies-and-request-failures.md
@@ -175,3 +221,11 @@ sections:
       adapted_from: null
     practice_readings:
     - sections/section-050/module-02/course-03-guided-practice.md
+    labs:
+    - id: lab-01
+      path: sections/section-050/module-02/labs/lab-01
+      objective: Diagnose a blocked container and restore its required configuration
+        without changing the Deployment.
+      status: draft
+      runtime_verification: pending
+      after_reading: sections/section-050/module-02/course-01-configuration-dependencies-and-request-failures.md

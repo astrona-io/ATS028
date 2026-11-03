@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Diagnose And Roll Back A Stuck Rollout (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-lab-030-03-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/python:3.13-alpine
+      - docker.io/library/busybox:1.37.0
+
+# The faults are left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads and the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: rolled-back
+      description: "The beacon Deployment runs the working image on 2 ready replicas"
+      type: file
+      source: validation/validate-rolled-back.sh
+      hint: "Use kubectl rollout undo, then wait with kubectl rollout status."
+    - name: failed-image-recorded
+      description: "The ConfigMap rollout-report key failed-image names the image of the failed revision"
+      type: file
+      source: validation/validate-failed-image-recorded.sh
+      hint: "Read the image from the old ReplicaSet or from rollout history --revision."
+    - name: reason-recorded
+      description: "The ConfigMap rollout-report key reason holds the waiting reason of the failed pod"
+      type: file
+      source: validation/validate-reason-recorded.sh
+      hint: "Read it from kubectl describe pod or kubectl events before the rollback."
+    - name: change-cause-set
+      description: "The beacon Deployment carries a new change-cause annotation"
+      type: file
+      source: validation/validate-change-cause-set.sh
+      hint: "Use kubectl annotate with kubernetes.io/change-cause and --overwrite."
+    - name: probe-untouched
+      description: "The probe Deployment was not changed"
+      type: file
+      source: validation/validate-probe-untouched.sh
+      hint: "Do not touch probe."
+
+teardown:
+  keepCluster: false

@@ -7,18 +7,18 @@ exam_objectives:
 
 A `probe` Pod is Pending because no node can satisfy its declared request and placement rules. Application logs cannot explain a process that has not started. Scheduling status and events identify this earlier boundary.
 
-## Learning Goals
+## Learning objectives
 
 - Distinguish unscheduled work from container preparation.
 - Interpret placement constraints and declared capacity.
 - Diagnose registry, mount and startup dependencies.
 - Choose corrections at the failing lifecycle stage.
 
-## Before You Start
+## Before you start
 
 Use the module playground for guided practice. It provides an isolated kind cluster and the declared starting fixtures. You need the Astrona command-line tool, kubectl and a working Podman engine; selected exercises also use Helm, curl or OpenSSL. Keep the module's private kubeconfig selected when running application commands.
 
-## Reading Order
+## Reading order
 
 1. Placement And Dependency Evidence
 2. Image Preparation And Container Startup

@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Diagnose And Repair Five Failing Workloads (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-lab-050-04-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/python:3.13-alpine
+      - docker.io/library/busybox:1.37.0
+
+# The faults are left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads and the five faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: ensign-running
+      description: The ensign Deployment runs with an image that can be pulled
+      type: file
+      source: validation/validate-ensign-running.sh
+      hint: Read the pull error in the pod events and set a valid tag.
+    - name: cadet-running
+      description: The cadet Deployment runs and still reads its setting from the ConfigMap cadet-settings
+      type: file
+      source: validation/validate-cadet-running.sh
+      hint: The pod needs a ConfigMap named cadet-settings with the key mode. Do not remove the reference.
+    - name: captain-scheduled
+      description: The captain pod is scheduled and running with a CPU request of 1 core or less
+      type: file
+      source: validation/validate-captain-scheduled.sh
+      hint: Read the FailedScheduling event and lower the CPU request.
+    - name: engine-stable
+      description: The engine pod runs without restarts and keeps a memory limit of at least 192Mi
+      type: file
+      source: validation/validate-engine-stable.sh
+      hint: The previous state of the container shows OOMKilled. Raise the memory limit; do not remove it.
+    - name: bridge-serving
+      description: A request from shuttle to http://bridge returns bridge-ok
+      type: file
+      source: validation/validate-bridge-serving.sh
+      hint: Compare the Service selector with the pod labels.
+    - name: triage-report
+      description: The ConfigMap triage-report names the cause of each fault
+      type: file
+      source: validation/validate-triage-report.sh
+      hint: Use the waiting reason or condition reason that kubectl shows for each fault, before you fix it.
+
+teardown:
+  keepCluster: false

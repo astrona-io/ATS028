@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Ship A File Log To Standard Output With A Sidecar (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-lab-040-03-01
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/busybox:1.37.0
+
+# The faults are left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads and the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: sidecar-running
+      description: "The ledger-writer pod runs two ready containers and one is named log-tail"
+      type: file
+      source: validation/validate-sidecar-running.sh
+      hint: "Add a second container named log-tail to the pod template of the Deployment ledger-writer, then wait for the rollout."
+    - name: shared-volume
+      description: "Both containers mount the same emptyDir volume, and log-tail mounts it read-only"
+      type: file
+      source: validation/validate-shared-volume.sh
+      hint: "Add an emptyDir volume, mount it at /var/log/app in the writer container, and mount the same volume at /var/log/app with readOnly true in log-tail."
+    - name: sidecar-streams-log
+      description: "The log of the log-tail container contains the ledger-event lines"
+      type: file
+      source: validation/validate-sidecar-streams-log.sh
+      hint: "Run tail -n+1 -F /var/log/app/app.log in the sidecar so the file content goes to standard output."
+    - name: writer-unchanged
+      description: "The writer container keeps its image and its file path, and the Deployment keeps 1 replica"
+      type: file
+      source: validation/validate-writer-unchanged.sh
+      hint: "Do not change the writer container. Only add the volume and the sidecar."
+
+teardown:
+  keepCluster: false

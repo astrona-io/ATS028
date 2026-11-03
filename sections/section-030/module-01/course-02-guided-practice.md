@@ -67,6 +67,24 @@ Requests influence scheduling and limits constrain selected runtime behavior. Re
 
 Choose the evidence that answers your question and state its time scope. A healthy status can coexist with high resource usage, and a low usage snapshot does not prove a future burst will fit the configured limit. Metrics-server is a practice dependency explicitly included here.
 
+## Where each number comes from
+
+The three observations in this exercise use three different sources, and each has its own time scope. The deployment and pod objects come from the API server and show the state that the controllers wrote most recently. Events come from the event store of the API server, which keeps them for a limited time, one hour by default, so an old event can be missing. `kubectl top` reads the Metrics API, which metrics-server serves from the kubelet resource metrics of each node. Metrics-server scrapes every node on an interval, so a value is a recent sample and not a live reading.
+
+## Reading the comparison
+
+A CPU value from `top` is in millicores, where `1000m` is one core. A memory value is the working set of the container, in `Mi`. Compare those values with the request and the limit of the container in this order: first the request, because the scheduler reserved it; then the limit, because the kubelet and the runtime enforce it. A usage below the request means that the reservation is larger than the need. A usage near the memory limit means that the container can be killed by the kernel if it grows. A usage above the CPU request is allowed and is limited only by the CPU limit and by free capacity on the node.
+
+The `logs` command adds a fourth source, the output of the process. A log line states what the application reported and does not state how many resources it used.
+
+## When the metrics are missing
+
+If `top` returns an error such as `Metrics API not available`, the API service `v1beta1.metrics.k8s.io` is not yet available. Check it with `kubectl get apiservice v1beta1.metrics.k8s.io`: the `AVAILABLE` column must be `True`. If it is `False`, read the metrics-server pod in `kube-system` and its log. If `top` answers but a new pod is missing from the list, the pod is younger than the scrape interval, and the value appears after the next collection. In both cases the cause is in the monitoring path and not in the application.
+
+An empty result for one pod is therefore not evidence about the pod. Use the status, the events and the logs for the pod while the metrics catch up.
+
+Record the time of each sample next to the value when you report a measurement. A number without its time cannot be compared with a later number.
+
 ## Common pitfalls
 
 > [!WARNING]

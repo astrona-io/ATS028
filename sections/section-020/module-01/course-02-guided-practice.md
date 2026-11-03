@@ -72,6 +72,20 @@ The liveness failure should lead kubelet to restart the container under this Pod
 
 Use actual conditions and restart evidence, not only an HTTP failure, to identify the recovery action. Aggressive probes can create avoidable restart loops. This exercise uses controlled markers to expose the distinction without claiming production thresholds are appropriate.
 
+## How long each recovery takes
+
+The timing of both reactions follows from the probe fields. With `periodSeconds: 2` and `failureThreshold: 3`, the kubelet needs three failed checks in a row before it acts, so a liveness restart starts about six seconds after the marker appears. One successful check resets the count of consecutive failures. A readiness failure uses the same counting, but its result is different: the kubelet sets the `Ready` condition of the pod to `False`, and the endpoint controller then marks the address as not ready in the EndpointSlice. The container keeps running and its restart count does not change.
+
+## What to compare in the output
+
+Three values answer the question of which action happened:
+
+- The `Ready` condition of the pod, which shows whether the pod is eligible for Service traffic.
+- The `ready` field of the endpoint in the EndpointSlice, which shows whether the Service sends traffic to the pod.
+- `restartCount` in `status.containerStatuses`, which grows only when the kubelet restarts the container.
+
+After a readiness failure, the first two values change and the restart count stays the same. After a liveness failure, the restart count grows by one, and the `Ready` condition drops only for the short time that the new container needs to start. The `describe` output lists a `Liveness probe failed` event followed by a `Killing` event for the second case, and no such events for the first case.
+
 ## Common pitfalls
 
 > [!WARNING]

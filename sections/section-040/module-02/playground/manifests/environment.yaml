@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: starfleet
+  labels:
+    project: ckad
+---
+# Three replicas, two containers each. Both containers write to standard output.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi
+  namespace: starfleet
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: multi
+  template:
+    metadata:
+      labels:
+        app: multi
+        tier: demo
+    spec:
+      containers:
+        - name: web
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'i=0; while true; do i=$((i+1)); echo "web request=$i status=200"; sleep 2; done'
+        - name: worker
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'i=0; while true; do i=$((i+1)); echo "worker job=$i state=done"; if [ $((i % 5)) -eq 0 ]; then echo "worker ERROR job=$i retry=1"; fi; sleep 2; done'
+---
+# A container that fails on every start. The message is in the previous log.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaky
+  namespace: starfleet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flaky
+  template:
+    metadata:
+      labels:
+        app: flaky
+        tier: demo
+    spec:
+      containers:
+        - name: app
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'echo "boot step=1 starting"; echo "fatal: cannot open /etc/flaky/config.yaml" >&2; exit 1'

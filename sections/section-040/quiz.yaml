@@ -1,0 +1,263 @@
+# Knowledge check for section 040. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats028-040
+course_id: ATS028
+exam_code: CKAD
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-040
+  title: 'Application Observability And Maintenance: Container Logging'
+questions:
+- id: ats028-040-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read the log of the previous run of a crash-looping container
+  source_readings:
+  - sections/section-040/module-01/course-01-logs-exits-and-crash-loops.md
+  prompt: A container restarts every few seconds and `kubectl logs POD` shows only
+    a few startup lines of the new run. You need the output that came before the last
+    crash. Which command does this?
+  options:
+  - id: a
+    text: "`kubectl logs POD --previous`"
+    explanation: Correct. `--previous` reads the log of the last ended run of the
+      container.
+  - id: b
+    text: "`kubectl logs POD --follow`"
+    explanation: "`--follow` streams the current run and does not go back to an earlier
+      run."
+  - id: c
+    text: "`kubectl logs POD --tail=0`"
+    explanation: "`--tail=0` prints no old lines at all."
+  - id: d
+    text: "`kubectl describe pod POD`"
+    explanation: "`describe` shows status and events, not the log lines of the container."
+  correct_option: a
+  explanation: A restart keeps the log of the previous run of the same container.
+    `--previous` selects it.
+- id: ats028-040-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose the container in a multi-container pod
+  source_readings:
+  - sections/section-040/module-02/course-01-choosing-the-container-and-the-pod.md
+  prompt: '`kubectl logs web-0` prints `Defaulted container "app" out of: app, proxy`.
+    You want the log of the `proxy` container. What do you do?'
+  options:
+  - id: a
+    text: Run `kubectl logs web-0 --previous`.
+    explanation: "`--previous` selects an older run, not another container."
+  - id: b
+    text: Run `kubectl logs web-0 -c proxy`.
+    explanation: Correct. `-c` selects the container by name.
+  - id: c
+    text: Run `kubectl logs deploy/web`.
+    explanation: This reads one pod and still defaults to a container.
+  - id: d
+    text: Nothing. The message means both logs were printed.
+    explanation: The message says only one container was chosen by default.
+  correct_option: b
+  explanation: A pod with several containers needs `-c NAME` to read a container other
+    than the default.
+- id: ats028-040-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Read logs from all pods behind a label
+  source_readings:
+  - sections/section-040/module-02/course-01-choosing-the-container-and-the-pod.md
+  prompt: A Deployment has three pods and you need the log lines of all of them. Which
+    command does that?
+  options:
+  - id: a
+    text: "`kubectl logs deploy/NAME`"
+    explanation: This reads the log of one pod of the Deployment only.
+  - id: b
+    text: "`kubectl logs NAME --all`"
+    explanation: "`--all` is not a `kubectl logs` option."
+  - id: c
+    text: "`kubectl logs -l app=NAME --prefix`"
+    explanation: Correct. The selector reads every matching pod, and `--prefix` shows
+      which pod printed each line.
+  - id: d
+    text: "`kubectl get pods -o logs`"
+    explanation: "`get` has no logs output format."
+  correct_option: c
+  explanation: A label selector with `-l` reads all matching pods. `--prefix` names
+    the pod on each line.
+- id: ats028-040-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Understand the tail default with a selector
+  source_readings:
+  - sections/section-040/module-02/course-02-limiting-timing-and-following-logs.md
+  prompt: You run `kubectl logs -l app=api` and see only 10 lines per pod, but the
+    pods printed hundreds. Why?
+  options:
+  - id: a
+    text: The kubelet rotated the files.
+    explanation: Rotation is not the cause here, because the same lines appear with
+      an explicit `--tail`.
+  - id: b
+    text: Only stderr is read when a selector is used.
+    explanation: Both streams are read.
+  - id: c
+    text: Selectors print only the first 10 pods.
+    explanation: The limit is on lines, not pods.
+  - id: d
+    text: With a selector, `--tail` defaults to 10 lines per pod.
+    explanation: Correct. Use `--tail=-1` to print all lines.
+  correct_option: d
+  explanation: For a selector the default is the last 10 lines per container. `--tail=-1`
+    removes the limit.
+- id: ats028-040-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Avoid losing lines when filtering logs
+  source_readings:
+  - sections/section-040/module-02/course-02-limiting-timing-and-following-logs.md
+  prompt: You run `kubectl logs POD --tail=20 | grep ERROR` and see no match, yet
+    an error was printed an hour ago. What is a correct fix?
+  options:
+  - id: a
+    text: Use `--tail=-1` so that grep sees all lines.
+    explanation: Correct. A small `--tail` drops older lines before grep runs.
+  - id: b
+    text: Add `--previous`.
+    explanation: The container did not restart, so there is no previous run.
+  - id: c
+    text: Add `--timestamps`.
+    explanation: Timestamps do not widen the set of lines.
+  - id: d
+    text: Use `--follow`.
+    explanation: Following shows new lines only and does not search old ones.
+  correct_option: a
+  explanation: "`--tail` limits what is sent. Filtering with grep must see all lines,
+    so use `--tail=-1`."
+- id: ats028-040-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Use time windows correctly
+  source_readings:
+  - sections/section-040/module-02/course-02-limiting-timing-and-following-logs.md
+  prompt: Which command is rejected by `kubectl logs`?
+  options:
+  - id: a
+    text: "`kubectl logs POD --since=10m`"
+    explanation: This is valid.
+  - id: b
+    text: "`kubectl logs POD --since-time=2026-01-01T10:00:00Z`"
+    explanation: This is valid.
+  - id: c
+    text: "`kubectl logs POD --since=10m --since-time=2026-01-01T10:00:00Z`"
+    explanation: Correct. The two time options cannot be combined.
+  - id: d
+    text: "`kubectl logs POD --since=10m --timestamps`"
+    explanation: This is valid. `--timestamps` only adds a time to each line.
+  correct_option: c
+  explanation: Use either `--since` or `--since-time`, not both.
+- id: ats028-040-q07
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Know the stream limit of a selector
+  source_readings:
+  - sections/section-040/module-02/course-02-limiting-timing-and-following-logs.md
+  prompt: "`kubectl logs -l app=worker -f` fails because the selector matches 8 pods.
+    What does the error ask for?"
+  options:
+  - id: a
+    text: A larger `--tail`.
+    explanation: Tail does not control the number of streams.
+  - id: b
+    text: A higher `--max-log-requests`.
+    explanation: Correct. The default allows 5 concurrent streams when following.
+  - id: c
+    text: The `-c` flag.
+    explanation: "`-c` selects a container and does not change the stream count."
+  - id: d
+    text: "`--previous`."
+    explanation: This does not change the stream count.
+  correct_option: b
+  explanation: Following many pods opens many streams. `--max-log-requests` raises
+    the limit above its default of 5.
+- id: ats028-040-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Know when a log is lost
+  source_readings:
+  - sections/section-040/module-03/course-01-from-container-output-to-node-log-files.md
+  prompt: A Deployment replaces a pod during a rollout. Which statement about the
+    old pod's log is correct?
+  options:
+  - id: a
+    text: "`kubectl logs --previous` still reads it from the new pod."
+    explanation: "`--previous` reads an earlier run of the same container in the same
+      pod, not a deleted pod."
+  - id: b
+    text: The log stays on the node forever.
+    explanation: The files are deleted with the pod.
+  - id: c
+    text: The log moves to the Deployment object.
+    explanation: Deployments do not store logs.
+  - id: d
+    text: The kubelet removes the log files with the pod, so Kubernetes can no longer
+      return them.
+    explanation: Correct. The log lives with the pod. A node agent must copy it off
+      the node to keep history.
+  correct_option: d
+  explanation: A container restart keeps the previous log. Deleting or replacing the
+    pod removes it.
+- id: ats028-040-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain log rotation
+  source_readings:
+  - sections/section-040/module-03/course-01-from-container-output-to-node-log-files.md
+  prompt: A busy container prints a lot. `kubectl logs --since=24h` returns lines
+    only from the last few minutes. What is the most likely cause?
+  options:
+  - id: a
+    text: The kubelet rotated the file and deleted the oldest ones.
+    explanation: Correct. Only the current file is returned, and old files are removed
+      after `containerLogMaxFiles`.
+  - id: b
+    text: "`--since` is limited to 5 minutes."
+    explanation: There is no such limit.
+  - id: c
+    text: The container has no stderr.
+    explanation: Stderr is not related to the missing lines.
+  - id: d
+    text: The API server caches only recent lines.
+    explanation: The API server does not store logs.
+  correct_option: a
+  explanation: The kubelet rotates at `containerLogMaxSize` and keeps `containerLogMaxFiles`.
+    Older lines are gone.
+- id: ats028-040-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Choose the sidecar pattern for file logs
+  source_readings:
+  - sections/section-040/module-03/course-02-node-level-logging-and-the-sidecar-pattern.md
+  prompt: An application writes only to `/var/log/app/app.log` and cannot print to
+    standard output. How can `kubectl logs` show the lines?
+  options:
+  - id: a
+    text: Run `kubectl logs --file /var/log/app/app.log`.
+    explanation: There is no such option.
+  - id: b
+    text: Mount the node's `/var/log` as an `emptyDir`.
+    explanation: An `emptyDir` is new storage, not the node log folder.
+  - id: c
+    text: Add a sidecar that shares an `emptyDir` with the application and runs `tail
+      -F` on the file.
+    explanation: Correct. The sidecar prints the file to its own standard output,
+      which the runtime captures.
+  - id: d
+    text: 'Set `restartPolicy: Always`.'
+    explanation: This does not expose a file.
+  correct_option: c
+  explanation: Only stdout and stderr are captured. A streaming sidecar turns a file
+    into stdout. The `emptyDir` is lost with the pod.

@@ -1,0 +1,664 @@
+# Final domain knowledge check across all five sections.
+schema_version: 1
+kind: question_bank
+id: ats028-final
+course_id: ATS028
+exam_code: CKAD
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: domain
+  id: application-observability-and-maintenance
+  title: Application Observability and Maintenance
+questions:
+- id: ats028-final-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Identify the group and version that the API server serves for
+    a resource
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: A teammate hands you an old manifest for a `CronJob` and asks which `group/version`
+    your cluster serves for it today. Which command answers the question from the
+    cluster itself?
+  options:
+  - id: a
+    text: "`kubectl api-resources --api-group=batch`"
+    explanation: Correct. Discovery lists the resources of the group with their served
+      versions. It reads the answer from the server, not from the manifest.
+  - id: b
+    text: "`kubectl auth can-i create cronjobs`"
+    explanation: This option checks permission, which is a separate question from
+      which version is served.
+  - id: c
+    text: "`kubectl get cronjob -o yaml` on a cluster that has no CronJob"
+    explanation: This option prints nothing useful when no CronJob exists, and an
+      existing object shows only the version it was read in.
+  - id: d
+    text: "`kubectl explain cronjob.spec.schedule`"
+    explanation: This option explains one field of the schema but does not list the
+      served versions of the kind.
+  correct_option: a
+  explanation: "`kubectl api-resources` and `kubectl api-versions` read discovery
+    information from the API server, which is the source of truth for served versions."
+- id: ats028-final-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Preserve behavior while migrating a Deployment definition
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: You migrate an old Deployment to `apps/v1`. The old file had no `spec.selector`,
+    and the application must keep its two replicas and its pod labels. Which change
+    preserves the behavior?
+  options:
+  - id: a
+    text: Change only the `apiVersion` line, because the other fields are the same.
+    explanation: The `apps/v1` version requires an explicit selector. Changing only
+      the version line is rejected.
+  - id: b
+    text: Add `spec.selector.matchLabels` that equals the labels in the pod template,
+      and keep the template as it was.
+    explanation: Correct. The selector must match the template labels, and the old
+      defaulting that copied the labels is gone.
+  - id: c
+    text: Add a selector with a label that does not appear in the template, so the
+      Deployment never adopts pods of other owners.
+    explanation: A selector that does not match the template labels is rejected.
+  - id: d
+    text: Delete the template labels so the selector can be empty.
+    explanation: An empty selector is not allowed here, and pods without labels cannot
+      be selected.
+  correct_option: b
+  explanation: In `apps/v1` the selector is required and must match the pod template
+    labels. The version edit alone does not create it.
+- id: ats028-final-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Recognize the server signal that marks a deprecated API call
+  source_readings:
+  - sections/section-010/module-02/course-01-deprecation-policy-and-server-signals.md
+  prompt: You run a command that succeeds and also prints a line that starts with
+    `Warning:` and names the replacement API. What should you conclude?
+  options:
+  - id: a
+    text: The command failed, and the output is a stale copy from the last attempt.
+    explanation: The command succeeded. The warning accompanies a successful response.
+  - id: b
+    text: The cluster has run out of quota, and the warning asks for a larger limit.
+    explanation: Quota problems produce a different error that names the exceeded
+      resource.
+  - id: c
+    text: The server accepted the request, but the API version is deprecated and the
+      manifest needs a planned migration.
+    explanation: Correct. The warning header is the signal that a deprecated version
+      is still served. It will stop working after the removal.
+  - id: d
+    text: The client binary is too old and must be updated before any command works.
+    explanation: A client version skew has its own message. This warning names a resource
+      and its replacement.
+  correct_option: c
+  explanation: A `Warning:` line means the request worked but used a deprecated version.
+    Treat it as a migration task before the next upgrade.
+- id: ats028-final-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Convert a legacy Ingress to the supported schema
+  source_readings:
+  - sections/section-010/module-03/course-01-migrating-ingress-and-cronjob-definitions.md
+  prompt: 'A legacy Ingress uses `serviceName`, `servicePort`, no `pathType` and the
+    annotation `kubernetes.io/ingress.class: nginx`. Which change list produces a
+    correct `networking.k8s.io/v1` definition?'
+  options:
+  - id: a
+    text: Rename the version only; the fields stay the same.
+    explanation: The backend fields, the path type and the class field all changed.
+      A version rename is not enough.
+  - id: b
+    text: Keep the annotation and add `ingressClassName` with a different class so
+      both are present.
+    explanation: Keeping both fields is a pitfall. Use the field and remove the annotation.
+  - id: c
+    text: Keep `serviceName` and add `pathType`, because the backend fields are unchanged.
+    explanation: The backend moved to the `service` object in the supported version.
+  - id: d
+    text: Use `service.name` and `service.port.number`, add a `pathType` to every
+      path, and set `spec.ingressClassName` instead of the annotation.
+    explanation: Correct. These are the three schema differences between the old and
+      the supported Ingress.
+  correct_option: d
+  explanation: The supported Ingress uses `service.name` and `service.port.number`,
+    requires `pathType`, and selects the controller with `spec.ingressClassName`.
+- id: ats028-final-q05
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Anticipate the changed meaning of an empty PodDisruptionBudget
+    selector
+  source_readings:
+  - sections/section-010/module-03/course-02-migrating-horizontalpodautoscaler-and-poddisruptionbudget-definitions.md
+  prompt: 'A PodDisruptionBudget in `policy/v1beta1` has `selector: {}` and protects
+    no pods. You change only the version line to `policy/v1` and apply it. What is
+    the effect?'
+  options:
+  - id: a
+    text: The budget now selects every pod in the namespace, so it can block voluntary
+      disruptions of pods it never covered before.
+    explanation: Correct. In `policy/v1` an empty selector selects every pod in the
+      namespace. Write `matchLabels` explicitly.
+  - id: b
+    text: The object is rejected because an empty selector is no longer allowed.
+    explanation: The empty selector is accepted, with a different meaning.
+  - id: c
+    text: Nothing changes, because the behavior of an empty selector is the same in
+      both versions.
+    explanation: The meaning changed between the two versions.
+  - id: d
+    text: The budget selects only the pods that have no labels.
+    explanation: An empty selector matches all pods, not only the unlabeled ones.
+  correct_option: a
+  explanation: In `policy/v1` an empty selector selects every pod of the namespace,
+    so a version-only change can alter which pods are protected.
+- id: ats028-final-q06
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose the probe type that matches the recovery action
+  source_readings:
+  - sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
+  prompt: A web application sometimes needs a minute of heavy work after a request
+    spike and cannot answer requests during that minute. You want Services to stop
+    sending traffic to a pod during that time, but you do not want the container restarted.
+    Which probe fits?
+  options:
+  - id: a
+    text: A `livenessProbe` on the application port.
+    explanation: A failing liveness probe restarts the container, which is the action
+      you do not want.
+  - id: b
+    text: A `readinessProbe` on a path that fails while the application is busy.
+    explanation: Correct. A failing readiness probe removes the pod from Service endpoints
+      and leaves the container running.
+  - id: c
+    text: A `startupProbe` on the application port.
+    explanation: A startup probe guards only the start of the container. It does not
+      run again later.
+  - id: d
+    text: No probe, and a lower `replicas` value.
+    explanation: Without a probe, Kubernetes keeps sending traffic to the pod.
+  correct_option: b
+  explanation: Readiness controls whether the pod receives traffic. Liveness restarts
+    the container. The startup probe covers the start phase.
+- id: ats028-final-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Interpret the success rule of an HTTP probe
+  source_readings:
+  - sections/section-020/module-02/course-01-http-and-tcp-probes.md
+  prompt: An `httpGet` probe targets `/ready`. The application answers `302 Found`
+    with a `Location` header to another path. How does the probe treat the response?
+  options:
+  - id: a
+    text: As a failure, because only status 200 passes.
+    explanation: The rule is wider than status 200.
+  - id: b
+    text: As a failure, because the probe follows the redirect and the next response
+      is a 404.
+    explanation: The status 302 itself is in the success range, so the probe counts
+      it as a success.
+  - id: c
+    text: As a success, because any status code of at least 200 and below 400 passes.
+    explanation: Correct. A status from 200 to 399 counts as success.
+  - id: d
+    text: As a success only when the `Location` header names the same host.
+    explanation: The probe does not compare headers to decide success.
+  correct_option: c
+  explanation: An `httpGet` probe succeeds when the response status is at least 200
+    and below 400.
+- id: ats028-final-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Choose the exec handler for a check that is not a network request
+  source_readings:
+  - sections/section-020/module-02/course-02-exec-and-grpc-probes.md
+  prompt: A worker process writes a heartbeat file every few seconds and exposes no
+    port. You want the kubelet to restart it when the file becomes older than a minute.
+    Which handler fits?
+  options:
+  - id: a
+    text: "`httpGet` on port 80."
+    explanation: The worker exposes no port, so nothing answers.
+  - id: b
+    text: "`tcpSocket` on port 22."
+    explanation: The worker has no listener to test.
+  - id: c
+    text: "`grpc` with the empty service name."
+    explanation: A gRPC probe needs a gRPC health service.
+  - id: d
+    text: "`exec` with a command that exits with code 0 only when the file is recent."
+    explanation: Correct. The `exec` handler runs a command in the container, and
+      the exit code decides the result.
+  correct_option: d
+  explanation: The `exec` handler judges only the exit code of a command that runs
+    inside the container.
+- id: ats028-final-q09
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Use the default timing fields
+  source_readings:
+  - sections/section-020/module-03/course-01-probe-timing-fields.md
+  prompt: A probe sets only the handler and no timing fields. How often does the kubelet
+    run it, and how long does it wait for one attempt?
+  options:
+  - id: a
+    text: Every 10 seconds, and it waits 1 second.
+    explanation: 'Correct. The defaults are `periodSeconds: 10` and `timeoutSeconds:
+      1`.'
+  - id: b
+    text: Every 30 seconds, and it waits 5 seconds.
+    explanation: These are not the defaults.
+  - id: c
+    text: Every second, and it waits 10 seconds.
+    explanation: The values are swapped.
+  - id: d
+    text: Only once, after the container is ready.
+    explanation: Probes repeat for the life of the container.
+  correct_option: a
+  explanation: 'The defaults are `periodSeconds: 10`, `timeoutSeconds: 1`, `failureThreshold:
+    3` and `successThreshold: 1`.'
+- id: ats028-final-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain the readiness effect on Services
+  source_readings:
+  - sections/section-020/module-03/course-01-probe-timing-fields.md
+  prompt: All pods of a Deployment fail their readiness probe at the same time. What
+    does a client of the Service see?
+  options:
+  - id: a
+    text: The Service sends requests to the pods anyway, because Services ignore readiness.
+    explanation: Services use only ready pods.
+  - id: b
+    text: The Service has no ready endpoints, so requests to it fail until a pod becomes
+      ready again.
+    explanation: Correct. The pod IP addresses are removed from the EndpointSlices,
+      and the containers keep running.
+  - id: c
+    text: The pods are restarted, and the Service answers after the restart.
+    explanation: A readiness failure does not restart a container.
+  - id: d
+    text: The Deployment creates new pods with a different image.
+    explanation: A failing probe does not change the template.
+  correct_option: b
+  explanation: A failed readiness probe removes the pod from the EndpointSlices of
+    its Services. With no ready pod, the Service has no endpoints.
+- id: ats028-final-q11
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose between spec, status and events when diagnosing a workload
+  source_readings:
+  - sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
+  prompt: A pod stays in `Pending`. You want to know why the scheduler did not place
+    it. Which evidence names the reason most directly?
+  options:
+  - id: a
+    text: The container logs of the pod.
+    explanation: A pending pod has no running container, so there is no log.
+  - id: b
+    text: "`kubectl top pod` for the pod."
+    explanation: Resource usage exists only for a running container.
+  - id: c
+    text: The events of the pod, shown at the end of `kubectl describe pod`.
+    explanation: Correct. The scheduler records a `FailedScheduling` event with the
+      reason, such as an unmatched node selector or missing resources.
+  - id: d
+    text: The `spec.replicas` field of the owner.
+    explanation: The replica count says how many pods are wanted, not why one is not
+      placed.
+  correct_option: c
+  explanation: Events hold the decisions of the scheduler and the kubelet. A pod that
+    has not started has no logs and no usage.
+- id: ats028-final-q12
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Identify where kubectl top gets its data
+  source_readings:
+  - sections/section-030/module-02/course-02-output-formats-sorting-and-resource-usage.md
+  prompt: "`kubectl top pods` fails on a new cluster with an error about the Metrics
+    API. What is the most likely cause?"
+  options:
+  - id: a
+    text: The container runtime is not installed.
+    explanation: The pods run, so a runtime exists.
+  - id: b
+    text: The pods have no labels.
+    explanation: "`kubectl top` does not need labels."
+  - id: c
+    text: The kubeconfig has no default namespace.
+    explanation: A missing namespace gives an empty result, not a Metrics API error.
+  - id: d
+    text: The `metrics-server` add-on is not installed or has not collected its first
+      sample yet.
+    explanation: Correct. `kubectl top` reads `metrics.k8s.io`, which metrics-server
+      serves, and the first sample needs up to a minute.
+  correct_option: d
+  explanation: The Metrics API is served by metrics-server. Without it, or before
+    its first sample, `kubectl top` cannot answer.
+- id: ats028-final-q13
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Use a field selector to find a finished pod
+  source_readings:
+  - sections/section-030/module-02/course-01-label-and-field-selectors.md
+  prompt: A Job has finished, and you want its pod without reading the whole list.
+    Which command selects it by phase?
+  options:
+  - id: a
+    text: "`kubectl get pods --field-selector=status.phase=Succeeded`"
+    explanation: Correct. `status.phase` is a supported field selector for pods.
+  - id: b
+    text: "`kubectl get pods -l status.phase=Succeeded`"
+    explanation: "`-l` selects labels, and the phase is a field."
+  - id: c
+    text: "`kubectl get pods --field-selector=spec.containers.name=main`"
+    explanation: That field is not supported as a pod field selector.
+  - id: d
+    text: "`kubectl get pods --sort-by=Succeeded`"
+    explanation: Sorting does not filter, and the value is not a field path.
+  correct_option: a
+  explanation: Field selectors filter on a few indexed fields per type. For pods,
+    `status.phase` is one of them.
+- id: ats028-final-q14
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read a stuck rollout correctly
+  source_readings:
+  - sections/section-030/module-03/course-01-rollouts-revisions-and-rollback.md
+  prompt: A Deployment update uses an image tag that does not exist. After 10 minutes
+    the rollout is still not finished. What does the Deployment do on its own?
+  options:
+  - id: a
+    text: It rolls back to the previous revision.
+    explanation: A Deployment does not roll back automatically.
+  - id: b
+    text: It sets the condition `Progressing=False` with the reason `ProgressDeadlineExceeded`
+      and keeps trying.
+    explanation: Correct. The default progress deadline is 600 seconds. The controller
+      reports the failure and does not roll back or stop.
+  - id: c
+    text: It deletes the new ReplicaSet and keeps the old pods.
+    explanation: The ReplicaSet stays in the history.
+  - id: d
+    text: It scales the Deployment to zero.
+    explanation: A failed update does not change the replica count.
+  correct_option: b
+  explanation: "`spec.progressDeadlineSeconds` defaults to 600. After it passes, the
+    condition reports the failure, and a person must act."
+- id: ats028-final-q15
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Wait for a condition in a script
+  source_readings:
+  - sections/section-030/module-03/course-02-events-watching-and-waiting.md
+  prompt: A script applies a Deployment and must continue only when the Deployment
+    is available, and fail after 60 seconds otherwise. Which approach is correct?
+  options:
+  - id: a
+    text: "`sleep 60` and then continue."
+    explanation: A fixed sleep does not check anything and does not fail.
+  - id: b
+    text: "`kubectl get pods -w` and stop the script manually."
+    explanation: A watch does not decide a condition for a script.
+  - id: c
+    text: "`kubectl wait --for=condition=Available deployment/NAME --timeout=60s`"
+    explanation: Correct. The command blocks until the condition is true and exits
+      with a non-zero code on timeout.
+  - id: d
+    text: "`kubectl events --watch` and read the last line."
+    explanation: Events are not a condition of the object and can expire.
+  correct_option: c
+  explanation: "`kubectl wait` exits non-zero on timeout, so a script can use it as
+    a gate. `kubectl rollout status` does the same for rollouts."
+- id: ats028-final-q16
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Read the log of the previous run of a crash-looping container
+  source_readings:
+  - sections/section-040/module-01/course-01-logs-exits-and-crash-loops.md
+  prompt: A container restarts every few seconds and `kubectl logs POD` shows only
+    a few startup lines of the new run. You need the output that came before the last
+    crash. Which command does this?
+  options:
+  - id: a
+    text: "`kubectl describe pod POD`"
+    explanation: "`describe` shows status and events, not the log lines of the container."
+  - id: b
+    text: "`kubectl logs POD --follow`"
+    explanation: "`--follow` streams the current run and does not go back to an earlier
+      run."
+  - id: c
+    text: "`kubectl logs POD --tail=0`"
+    explanation: "`--tail=0` prints no old lines at all."
+  - id: d
+    text: "`kubectl logs POD --previous`"
+    explanation: Correct. `--previous` reads the log of the last ended run of the
+      container.
+  correct_option: d
+  explanation: A restart keeps the log of the previous run of the same container.
+    `--previous` selects it.
+- id: ats028-final-q17
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Read logs from all pods behind a label
+  source_readings:
+  - sections/section-040/module-02/course-01-choosing-the-container-and-the-pod.md
+  prompt: A Deployment has three pods and you need the log lines of all of them. Which
+    command does that?
+  options:
+  - id: a
+    text: "`kubectl logs -l app=NAME --prefix`"
+    explanation: Correct. The selector reads every matching pod, and `--prefix` shows
+      which pod printed each line.
+  - id: b
+    text: "`kubectl logs NAME --all`"
+    explanation: "`--all` is not a `kubectl logs` option."
+  - id: c
+    text: "`kubectl logs deploy/NAME`"
+    explanation: This reads the log of one pod of the Deployment only.
+  - id: d
+    text: "`kubectl get pods -o logs`"
+    explanation: "`get` has no logs output format."
+  correct_option: a
+  explanation: A label selector with `-l` reads all matching pods. `--prefix` names
+    the pod on each line.
+- id: ats028-final-q18
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Avoid losing lines when filtering logs
+  source_readings:
+  - sections/section-040/module-02/course-02-limiting-timing-and-following-logs.md
+  prompt: You run `kubectl logs POD --tail=20 | grep ERROR` and see no match, yet
+    an error was printed an hour ago. What is a correct fix?
+  options:
+  - id: a
+    text: Add `--previous`.
+    explanation: The container did not restart, so there is no previous run.
+  - id: b
+    text: Use `--tail=-1` so that grep sees all lines.
+    explanation: Correct. A small `--tail` drops older lines before grep runs.
+  - id: c
+    text: Add `--timestamps`.
+    explanation: Timestamps do not widen the set of lines.
+  - id: d
+    text: Use `--follow`.
+    explanation: Following shows new lines only and does not search old ones.
+  correct_option: b
+  explanation: "`--tail` limits what is sent. Filtering with grep must see all lines,
+    so use `--tail=-1`."
+- id: ats028-final-q19
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Know the stream limit of a selector
+  source_readings:
+  - sections/section-040/module-02/course-02-limiting-timing-and-following-logs.md
+  prompt: "`kubectl logs -l app=worker -f` fails because the selector matches 8 pods.
+    What does the error ask for?"
+  options:
+  - id: a
+    text: A larger `--tail`.
+    explanation: Tail does not control the number of streams.
+  - id: b
+    text: The `-c` flag.
+    explanation: "`-c` selects a container and does not change the stream count."
+  - id: c
+    text: A higher `--max-log-requests`.
+    explanation: Correct. The default allows 5 concurrent streams when following.
+  - id: d
+    text: "`--previous`."
+    explanation: This does not change the stream count.
+  correct_option: c
+  explanation: Following many pods opens many streams. `--max-log-requests` raises
+    the limit above its default of 5.
+- id: ats028-final-q20
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Choose the sidecar pattern for file logs
+  source_readings:
+  - sections/section-040/module-03/course-02-node-level-logging-and-the-sidecar-pattern.md
+  prompt: An application writes only to `/var/log/app/app.log` and cannot print to
+    standard output. How can `kubectl logs` show the lines?
+  options:
+  - id: a
+    text: Run `kubectl logs --file /var/log/app/app.log`.
+    explanation: There is no such option.
+  - id: b
+    text: Mount the node's `/var/log` as an `emptyDir`.
+    explanation: An `emptyDir` is new storage, not the node log folder.
+  - id: c
+    text: 'Set `restartPolicy: Always`.'
+    explanation: This does not expose a file.
+  - id: d
+    text: Add a sidecar that shares an `emptyDir` with the application and runs `tail
+      -F` on the file.
+    explanation: Correct. The sidecar prints the file to its own standard output,
+      which the runtime captures.
+  correct_option: d
+  explanation: Only stdout and stderr are captured. A streaming sidecar turns a file
+    into stdout. The `emptyDir` is lost with the pod.
+- id: ats028-final-q21
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Find why a pod is Pending
+  source_readings:
+  - sections/section-050/module-04/course-01-reading-status-and-events-to-find-the-failed-stage.md
+  prompt: A pod stays `Pending` and has no node. Where do you find the reason?
+  options:
+  - id: a
+    text: In the `Events` section at the end of `kubectl describe pod`, where the
+      scheduler records a `FailedScheduling` event.
+    explanation: Correct. The message names the cause, such as `Insufficient cpu`.
+  - id: b
+    text: In `kubectl logs`.
+    explanation: No container exists yet, so there is no log.
+  - id: c
+    text: In `kubectl exec`.
+    explanation: A pod without a node has no running container to run a command in.
+  - id: d
+    text: In `kubectl top pod`.
+    explanation: There is no usage for a pod that has not started.
+  correct_option: a
+  explanation: A pending pod has not reached the kubelet. The scheduler evidence is
+    in conditions and events.
+- id: ats028-final-q22
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Tell image pull errors apart from start errors
+  source_readings:
+  - sections/section-050/module-01/course-02-image-preparation-and-container-startup.md
+  prompt: The status of a pod is `ImagePullBackOff`. Which first check is best?
+  options:
+  - id: a
+    text: Delete the pod.
+    explanation: The Deployment creates an identical pod with the same fault.
+  - id: b
+    text: Read the pull message in `describe` events, for example a wrong tag or a
+      missing image.
+    explanation: Correct. A wrong tag is a more common cause than a network failure.
+  - id: c
+    text: Increase the memory limit.
+    explanation: Memory limits apply after a start.
+  - id: d
+    text: Run `kubectl logs --previous`.
+    explanation: The container never started, so there is no log.
+  correct_option: b
+  explanation: The image is pulled by the kubelet before the container exists. The
+    reason is in events.
+- id: ats028-final-q23
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish CrashLoopBackOff from its cause
+  source_readings:
+  - sections/section-050/module-04/course-02-resource-limits-exit-codes-and-service-endpoints.md
+  prompt: A pod shows `CrashLoopBackOff` with a growing restart count. What is `CrashLoopBackOff`?
+  options:
+  - id: a
+    text: The root cause of the failure.
+    explanation: It is not a cause.
+  - id: b
+    text: A scheduler decision.
+    explanation: The scheduler already placed the pod.
+  - id: c
+    text: The delay of the kubelet before it restarts a container that keeps stopping,
+      doubling up to five minutes.
+    explanation: Correct. The cause is in `lastState` and in the previous log.
+  - id: d
+    text: A Service state with no endpoints.
+    explanation: It is a container state, not a Service state.
+  correct_option: c
+  explanation: Backoff is the response to repeated failure. Read `lastState` and `--previous`
+    for the cause.
+- id: ats028-final-q24
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Run a command in a container
+  source_readings:
+  - sections/section-050/module-03/course-01-running-commands-and-tunnels-with-exec-and-port-forward.md
+  prompt: Which command runs `env` in the container `app` of pod `scout` in namespace
+    `starfleet`?
+  options:
+  - id: a
+    text: "`kubectl -n starfleet exec scout -c app env --it`"
+    explanation: The option placement is wrong and the command is not separated.
+  - id: b
+    text: "`kubectl -n starfleet logs scout env`"
+    explanation: "`logs` does not run commands."
+  - id: c
+    text: "`kubectl -n starfleet run scout env`"
+    explanation: "`run` creates a pod."
+  - id: d
+    text: "`kubectl -n starfleet exec scout -c app -- env`"
+    explanation: Correct. The `--` separates kubectl options from the command.
+  correct_option: d
+  explanation: "`exec` takes the command after `--`. `env` prints all variables, including
+    Secret values."
+- id: ats028-final-q25
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Use a debug copy safely
+  source_readings:
+  - sections/section-050/module-03/course-02-ephemeral-containers-and-file-copy.md
+  prompt: You create a copy with `kubectl debug scout --copy-to=scout-debug ...`.
+    What must you check?
+  options:
+  - id: a
+    text: That the copy does not match the Service selector, and delete it when done.
+    explanation: Correct. Labels are kept by default.
+  - id: b
+    text: That the copy uses the same node.
+    explanation: Placement is not related to this risk.
+  - id: c
+    text: That the original pod is deleted first.
+    explanation: The copy is separate and the original is left in place.
+  - id: d
+    text: That the copy keeps the label `app=scout`.
+    explanation: Keeping the label sends real traffic to the copy.
+  correct_option: a
+  explanation: A copy is a separate pod with the same labels unless you change them.

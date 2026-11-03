@@ -1,0 +1,75 @@
+# __CODE__ and __KEY__ are replaced by the seed script with random values.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manifest
+  namespace: starfleet
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: manifest
+  template:
+    metadata:
+      labels:
+        app: manifest
+    spec:
+      containers:
+        - name: web
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'i=0; while true; do i=$((i+1)); echo "web request=$i status=200"; sleep 2; done'
+        - name: audit
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'i=0; while true; do i=$((i+1)); echo "audit entry=$i ok"; if [ $((i % 3)) -eq 0 ]; then echo "audit ERROR code=__CODE__ entry=$i"; fi; sleep 2; done'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valve
+  namespace: starfleet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: valve
+  template:
+    metadata:
+      labels:
+        app: valve
+    spec:
+      containers:
+        - name: app
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'echo "boot step=1 starting"; echo "fatal: environment variable __KEY__ is not set" >&2; exit 1'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gauge
+  namespace: starfleet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gauge
+  template:
+    metadata:
+      labels:
+        app: gauge
+    spec:
+      containers:
+        - name: writer
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'mkdir -p /var/log/gauge; while true; do echo "$(date +%T) gauge-reading value=$RANDOM" >> /var/log/gauge/gauge.log; sleep 2; done'

@@ -7,18 +7,18 @@ exam_objectives:
 
 A container exits because it cannot read required configuration. Kubernetes retries it and later displays a crash-loop backoff. The retry delay describes Kubernetes's response, while the first exit and its inputs explain the failure.
 
-## Learning Goals
+## Learning objectives
 
 - Explain process output and container log retrieval.
 - Select the relevant container and previous instance.
 - Correlate records with version and observation time.
 - Distinguish log evidence from startup events and infrastructure errors.
 
-## Before You Start
+## Before you start
 
 Use the module playground for guided practice. It provides an isolated kind cluster and the declared starting fixtures. You need the Astrona command-line tool, kubectl and a working Podman engine; selected exercises also use Helm, curl or OpenSSL. Keep the module's private kubeconfig selected when running application commands.
 
-## Reading Order
+## Reading order
 
 1. Logs, Exits And Crash Loops
 2. Selecting The Right Container Log And Time Window

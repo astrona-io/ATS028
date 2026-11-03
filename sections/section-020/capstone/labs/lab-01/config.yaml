@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Probes Capstone (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-capstone-020
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/python:3.13-alpine
+      - docker.io/library/busybox:1.37.0
+
+# The faults are left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the three Deployments with their faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: hail-ready
+      description: hail keeps an HTTP readiness probe on the application port and has 2 ready replicas
+      type: file
+      source: validation/validate-hail-ready.sh
+      hint: Read the pod events of hail; the readiness probe uses a port that nothing listens on.
+    - name: dock-startup-probe
+      description: dock has a startup probe with a budget of 60 to 300 seconds and a quick liveness probe
+      type: file
+      source: validation/validate-dock-startup-probe.sh
+      hint: Add startupProbe to the web container. Do not lengthen the liveness probe.
+    - name: dock-stable
+      description: dock has 2 ready replicas and no container restarts
+      type: file
+      source: validation/validate-dock-stable.sh
+      hint: The application needs 30 seconds to listen; the startup probe must wait longer than that.
+    - name: keel-probes
+      description: keel has a TCP readiness probe and an HTTP liveness probe on /health
+      type: file
+      source: validation/validate-keel-probes.sh
+      hint: Use tcpSocket for readiness and httpGet with path /health for liveness, both on the port named http.
+    - name: keel-ready
+      description: keel is ready with the new probes and no restarts
+      type: file
+      source: validation/validate-keel-ready.sh
+      hint: Wait for the rollout of keel to finish.
+    - name: probe-report
+      description: probe-report records the failing port of hail and the startup budget of dock
+      type: file
+      source: validation/validate-probe-report.sh
+      hint: The failing port is in the Unhealthy event of hail. The budget is initialDelaySeconds + periodSeconds * failureThreshold.
+    - name: services-answer
+      description: The hail, dock and keel Services answer the shuttle pod
+      type: file
+      source: validation/validate-services-answer.sh
+      hint: Wait until every Deployment is ready.
+
+teardown:
+  keepCluster: false

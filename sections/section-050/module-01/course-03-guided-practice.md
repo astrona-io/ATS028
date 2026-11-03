@@ -68,6 +68,22 @@ The repair creates a compatible template. It does not require weakening all clus
 
 Identify the first blocked lifecycle phase before changing unrelated fields. Pending placement, image download and a running process failure have different responsible components and evidence. This controlled case establishes the diagnosis method without fabricating scheduler output.
 
+## Why the old pods stay while the new one is Pending
+
+A Deployment with the rolling update strategy creates a new ReplicaSet for the changed template and scales it up while it scales the old one down. The new pod cannot be scheduled because of the selector, so it never becomes ready. The Deployment controller counts ready pods against `maxUnavailable`, and it stops removing old pods when removing more would go below the allowed availability. The result is one Pending pod from the new ReplicaSet next to the ready pods of the old one. This is why requests to the Service still work while the rollout does not finish, and why `rollout status` waits until its timeout.
+
+## What the scheduler checks first
+
+The scheduler filters nodes in steps. A node selector is checked as a filter: a node that does not carry every listed label is removed from the candidates. When no node is left, the scheduler writes the `FailedScheduling` event with the number of nodes that each filter rejected, and the pod stays unassigned. Removing the selector from the template creates a new ReplicaSet revision, and the new pod passes the filter. The old Pending pod is replaced because its ReplicaSet scales to zero.
+
+## Other reasons for the same symptom
+
+A node selector is one of several filters that leave a pod `Pending`. Node affinity rules, taints without a matching toleration, resource requests that no node can hold, and a PersistentVolumeClaim that is not bound all end in the same status. The `FailedScheduling` message names which filter rejected the nodes, so read the message before you change the template. A message that mentions `node(s) didn't match Pod's node affinity/selector` points to a selector or affinity, a message with `Insufficient cpu` points to requests, and a message with `untolerated taint` points to a taint.
+
+After you fix the right field, the scheduler tries the pod again on its own. No restart of the scheduler and no deletion of the pod is needed.
+
+Check the result with the same steps that found the fault: the pod list, the events of the new pod and a request from the client pod. All three must agree before the repair counts as finished.
+
 ## Common pitfalls
 
 > [!WARNING]

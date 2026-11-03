@@ -1,0 +1,257 @@
+# Knowledge check for section 050. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats028-050
+course_id: ATS028
+exam_code: CKAD
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-050
+  title: 'Application Observability And Maintenance: Debugging Applications'
+questions:
+- id: ats028-050-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Find why a pod is Pending
+  source_readings:
+  - sections/section-050/module-04/course-01-reading-status-and-events-to-find-the-failed-stage.md
+  prompt: A pod stays `Pending` and has no node. Where do you find the reason?
+  options:
+  - id: a
+    text: In `kubectl exec`.
+    explanation: A pod without a node has no running container to run a command in.
+  - id: b
+    text: In `kubectl logs`.
+    explanation: No container exists yet, so there is no log.
+  - id: c
+    text: In the `Events` section at the end of `kubectl describe pod`, where the
+      scheduler records a `FailedScheduling` event.
+    explanation: Correct. The message names the cause, such as `Insufficient cpu`.
+  - id: d
+    text: In `kubectl top pod`.
+    explanation: There is no usage for a pod that has not started.
+  correct_option: c
+  explanation: A pending pod has not reached the kubelet. The scheduler evidence is
+    in conditions and events.
+- id: ats028-050-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Relate requests to scheduling
+  source_readings:
+  - sections/section-050/module-04/course-02-resource-limits-exit-codes-and-service-endpoints.md
+  prompt: A Deployment pod requests 64 CPU cores. The only node has fewer allocatable
+    cores. What is the state of the pod?
+  options:
+  - id: a
+    text: "`Pending` with a `FailedScheduling` event, until the request is reduced."
+    explanation: Correct. The scheduler sums the requests and finds no node that can
+      hold them.
+  - id: b
+    text: "`Running`, but throttled."
+    explanation: A pod that is not placed does not run, and throttling is related
+      to limits.
+  - id: c
+    text: "`OOMKilled`."
+    explanation: That is a memory kill after a start.
+  - id: d
+    text: "`ImagePullBackOff`."
+    explanation: The image is not pulled until a node is chosen.
+  correct_option: a
+  explanation: The scheduler places by requests. A request larger than any node leaves
+    the pod unplaced.
+- id: ats028-050-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Tell image pull errors apart from start errors
+  source_readings:
+  - sections/section-050/module-01/course-02-image-preparation-and-container-startup.md
+  prompt: The status of a pod is `ImagePullBackOff`. Which first check is best?
+  options:
+  - id: a
+    text: Delete the pod.
+    explanation: The Deployment creates an identical pod with the same fault.
+  - id: b
+    text: Run `kubectl logs --previous`.
+    explanation: The container never started, so there is no log.
+  - id: c
+    text: Increase the memory limit.
+    explanation: Memory limits apply after a start.
+  - id: d
+    text: Read the pull message in `describe` events, for example a wrong tag or a
+      missing image.
+    explanation: Correct. A wrong tag is a more common cause than a network failure.
+  correct_option: d
+  explanation: The image is pulled by the kubelet before the container exists. The
+    reason is in events.
+- id: ats028-050-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Read exit codes
+  source_readings:
+  - sections/section-050/module-04/course-02-resource-limits-exit-codes-and-service-endpoints.md
+  prompt: A container shows `lastState.terminated` with reason `OOMKilled` and exit
+    code `137`. What does 137 mean?
+  options:
+  - id: a
+    text: The application returned the value 137 by itself as a success code.
+    explanation: Success is exit code 0.
+  - id: b
+    text: 128 plus signal 9, the container was ended with `SIGKILL`.
+    explanation: Correct. The kernel killed it when it went over the memory limit.
+  - id: c
+    text: The container was ended by `SIGTERM`.
+    explanation: "`SIGTERM` is signal 15 and gives 143."
+  - id: d
+    text: The image could not be pulled.
+    explanation: A pull failure gives no exit code, because the container never ran.
+  correct_option: b
+  explanation: Exit codes above 128 mean 128 plus the signal number.
+- id: ats028-050-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish CrashLoopBackOff from its cause
+  source_readings:
+  - sections/section-050/module-04/course-02-resource-limits-exit-codes-and-service-endpoints.md
+  prompt: A pod shows `CrashLoopBackOff` with a growing restart count. What is `CrashLoopBackOff`?
+  options:
+  - id: a
+    text: The root cause of the failure.
+    explanation: It is not a cause.
+  - id: b
+    text: A scheduler decision.
+    explanation: The scheduler already placed the pod.
+  - id: c
+    text: The delay of the kubelet before it restarts a container that keeps stopping,
+      doubling up to five minutes.
+    explanation: Correct. The cause is in `lastState` and in the previous log.
+  - id: d
+    text: A Service state with no endpoints.
+    explanation: It is a container state, not a Service state.
+  correct_option: c
+  explanation: Backoff is the response to repeated failure. Read `lastState` and `--previous`
+    for the cause.
+- id: ats028-050-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Fix a Service with no endpoints
+  source_readings:
+  - sections/section-050/module-04/course-02-resource-limits-exit-codes-and-service-endpoints.md
+  prompt: A pod is `Running` and ready, but its Service has no endpoints. What do
+    you compare first?
+  options:
+  - id: a
+    text: The `restartPolicy`.
+    explanation: It controls restarts, not endpoints.
+  - id: b
+    text: The node CPU capacity.
+    explanation: Capacity does not affect endpoint selection.
+  - id: c
+    text: The image tag.
+    explanation: The pod already runs.
+  - id: d
+    text: The Service selector and the pod labels.
+    explanation: Correct. The endpoints controller adds only ready pods whose labels
+      match the selector.
+  correct_option: d
+  explanation: Endpoints come from a label match with ready pods.
+- id: ats028-050-q07
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Run a command in a container
+  source_readings:
+  - sections/section-050/module-03/course-01-running-commands-and-tunnels-with-exec-and-port-forward.md
+  prompt: Which command runs `env` in the container `app` of pod `scout` in namespace
+    `starfleet`?
+  options:
+  - id: a
+    text: "`kubectl -n starfleet exec scout -c app env --it`"
+    explanation: The option placement is wrong and the command is not separated.
+  - id: b
+    text: "`kubectl -n starfleet exec scout -c app -- env`"
+    explanation: Correct. The `--` separates kubectl options from the command.
+  - id: c
+    text: "`kubectl -n starfleet run scout env`"
+    explanation: "`run` creates a pod."
+  - id: d
+    text: "`kubectl -n starfleet logs scout env`"
+    explanation: "`logs` does not run commands."
+  correct_option: b
+  explanation: "`exec` takes the command after `--`. `env` prints all variables, including
+    Secret values."
+- id: ats028-050-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Understand what port-forward tests
+  source_readings:
+  - sections/section-050/module-03/course-01-running-commands-and-tunnels-with-exec-and-port-forward.md
+  prompt: "`kubectl port-forward pod/scout 8080:8080` works and returns the right
+    page. What does this prove?"
+  options:
+  - id: a
+    text: The Service for the pod works.
+    explanation: The forward goes to the pod and skips the Service.
+  - id: b
+    text: The network policy allows all traffic.
+    explanation: The forward is not subject to the same path as other pods.
+  - id: c
+    text: The pod answers on port 8080, but it says nothing about the Service or its
+      endpoints.
+    explanation: Correct. Test the Service from a client inside the cluster.
+  - id: d
+    text: The `containerPort` is correct.
+    explanation: "`containerPort` is informational and a request is the real proof."
+  correct_option: c
+  explanation: A forward to a pod does not test the Service path.
+- id: ats028-050-q09
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Debug a pod that has no shell
+  source_readings:
+  - sections/section-050/module-03/course-02-ephemeral-containers-and-file-copy.md
+  prompt: A container image has no shell and no tools. You need to inspect the running
+    process. What is the right approach?
+  options:
+  - id: a
+    text: Add an ephemeral container with `kubectl debug --target=app` and an image
+      with tools.
+    explanation: Correct. `--target` shares the process namespace, so `ps` shows the
+      application process.
+  - id: b
+    text: Use `kubectl cp` to copy a shell into the pod.
+    explanation: A shell cannot run without an interpreter in the image, and copying
+      does not start it.
+  - id: c
+    text: Delete the pod and add a shell to the image.
+    explanation: This removes the failing state and takes time.
+  - id: d
+    text: Use `kubectl logs -c debug`.
+    explanation: There is no such container yet.
+  correct_option: a
+  explanation: An ephemeral container is added to a running pod and cannot be removed.
+    Without `--target` it does not see the process.
+- id: ats028-050-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Use a debug copy safely
+  source_readings:
+  - sections/section-050/module-03/course-02-ephemeral-containers-and-file-copy.md
+  prompt: You create a copy with `kubectl debug scout --copy-to=scout-debug ...`.
+    What must you check?
+  options:
+  - id: a
+    text: That the copy keeps the label `app=scout`.
+    explanation: Keeping the label sends real traffic to the copy.
+  - id: b
+    text: That the copy uses the same node.
+    explanation: Placement is not related to this risk.
+  - id: c
+    text: That the original pod is deleted first.
+    explanation: The copy is separate and the original is left in place.
+  - id: d
+    text: That the copy does not match the Service selector, and delete it when done.
+    explanation: Correct. Labels are kept by default.
+  correct_option: d
+  explanation: A copy is a separate pod with the same labels unless you change them.

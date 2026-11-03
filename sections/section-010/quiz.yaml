@@ -1,0 +1,304 @@
+# Knowledge check for section 010. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats028-010
+course_id: ATS028
+exam_code: CKAD
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-010
+  title: 'Application Observability And Maintenance: Deprecations And Migration'
+questions:
+- id: ats028-010-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Identify the group and version that the API server serves for
+    a resource
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: A teammate hands you an old manifest for a `CronJob` and asks which `group/version`
+    your cluster serves for it today. Which command answers the question from the
+    cluster itself?
+  options:
+  - id: a
+    text: "`kubectl explain cronjob.spec.schedule`"
+    explanation: This option explains one field of the schema but does not list the
+      served versions of the kind.
+  - id: b
+    text: "`kubectl auth can-i create cronjobs`"
+    explanation: This option checks permission, which is a separate question from
+      which version is served.
+  - id: c
+    text: "`kubectl get cronjob -o yaml` on a cluster that has no CronJob"
+    explanation: This option prints nothing useful when no CronJob exists, and an
+      existing object shows only the version it was read in.
+  - id: d
+    text: "`kubectl api-resources --api-group=batch`"
+    explanation: Correct. Discovery lists the resources of the group with their served
+      versions. It reads the answer from the server, not from the manifest.
+  correct_option: d
+  explanation: "`kubectl api-resources` and `kubectl api-versions` read discovery
+    information from the API server, which is the source of truth for served versions."
+- id: ats028-010-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain why a request for a removed API version fails
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: 'You apply a Deployment manifest that starts with `apiVersion: extensions/v1beta1`
+    on a current cluster. The server answers that it has no matching resource for
+    the kind in that version. What does this message tell you?'
+  options:
+  - id: a
+    text: The service account of the caller has no permission to create Deployments.
+    explanation: A permission denial is a different response. It means the request
+      reached an authorization decision.
+  - id: b
+    text: The Deployment schema has a required field that is missing.
+    explanation: A missing field is a validation error on an existing endpoint, not
+      a missing endpoint.
+  - id: c
+    text: The API server no longer serves that group and version, so the manifest
+      must use a served version.
+    explanation: Correct. The endpoint does not exist, so the request cannot be matched
+      to a resource. The fix is a supported version, for example `apps/v1`.
+  - id: d
+    text: The Deployment objects in the cluster were deleted by the upgrade.
+    explanation: Removing a version does not delete stored objects. Those objects
+      stay available through a served version.
+  correct_option: c
+  explanation: An unserved version produces a no-match error. Permission errors and
+    schema validation errors come from endpoints that exist.
+- id: ats028-010-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Preserve behavior while migrating a Deployment definition
+  source_readings:
+  - sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
+  prompt: You migrate an old Deployment to `apps/v1`. The old file had no `spec.selector`,
+    and the application must keep its two replicas and its pod labels. Which change
+    preserves the behavior?
+  options:
+  - id: a
+    text: Change only the `apiVersion` line, because the other fields are the same.
+    explanation: The `apps/v1` version requires an explicit selector. Changing only
+      the version line is rejected.
+  - id: b
+    text: Add `spec.selector.matchLabels` that equals the labels in the pod template,
+      and keep the template as it was.
+    explanation: Correct. The selector must match the template labels, and the old
+      defaulting that copied the labels is gone.
+  - id: c
+    text: Add a selector with a label that does not appear in the template, so the
+      Deployment never adopts pods of other owners.
+    explanation: A selector that does not match the template labels is rejected.
+  - id: d
+    text: Delete the template labels so the selector can be empty.
+    explanation: An empty selector is not allowed here, and pods without labels cannot
+      be selected.
+  correct_option: b
+  explanation: In `apps/v1` the selector is required and must match the pod template
+    labels. The version edit alone does not create it.
+- id: ats028-010-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: State the minimum lifetime that the deprecation policy guarantees
+    for beta APIs
+  source_readings:
+  - sections/section-010/module-02/course-01-deprecation-policy-and-server-signals.md
+  prompt: A cluster operator reads that a beta API version is deprecated in a release.
+    Under the Kubernetes deprecation policy, how long must that beta version keep
+    working after the announcement?
+  options:
+  - id: a
+    text: At least 9 months or 3 releases, whichever is longer.
+    explanation: Correct. This is the stated minimum for a beta version once it is
+      announced as deprecated.
+  - id: b
+    text: Exactly 1 release, then it can be removed.
+    explanation: One release is below the minimum for a beta version.
+  - id: c
+    text: At least 12 months or 3 releases, whichever is longer, the same as for a
+      stable version.
+    explanation: The longer period applies to a stable (GA) version, not to a beta
+      version.
+  - id: d
+    text: It has no minimum because beta versions are experimental.
+    explanation: A version without a minimum is an alpha version, not a beta version.
+  correct_option: a
+  explanation: A beta version must keep working for at least 9 months or 3 releases
+    after its deprecation is announced, whichever is longer. A GA version has 12 months
+    or 3 releases.
+- id: ats028-010-q05
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Recognize the server signal that marks a deprecated API call
+  source_readings:
+  - sections/section-010/module-02/course-01-deprecation-policy-and-server-signals.md
+  prompt: You run a command that succeeds and also prints a line that starts with
+    `Warning:` and names the replacement API. What should you conclude?
+  options:
+  - id: a
+    text: The command failed, and the output is a stale copy from the last attempt.
+    explanation: The command succeeded. The warning accompanies a successful response.
+  - id: b
+    text: The server accepted the request, but the API version is deprecated and the
+      manifest needs a planned migration.
+    explanation: Correct. The warning header is the signal that a deprecated version
+      is still served. It will stop working after the removal.
+  - id: c
+    text: The cluster has run out of quota, and the warning asks for a larger limit.
+    explanation: Quota problems produce a different error that names the exceeded
+      resource.
+  - id: d
+    text: The client binary is too old and must be updated before any command works.
+    explanation: A client version skew has its own message. This warning names a resource
+      and its replacement.
+  correct_option: b
+  explanation: A `Warning:` line means the request worked but used a deprecated version.
+    Treat it as a migration task before the next upgrade.
+- id: ats028-010-q06
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Find clients that still call deprecated APIs
+  source_readings:
+  - sections/section-010/module-02/course-02-finding-deprecated-api-use-and-converting-definitions.md
+  prompt: After an upgrade plan, you need to know whether any workload in the running
+    cluster still sends requests to a deprecated API. Which approach finds both the
+    fact and the caller?
+  options:
+  - id: a
+    text: Read the `apiserver_requested_deprecated_apis` metric to see that deprecated
+      requests exist, then search the audit log for the annotation `k8s.io/deprecated`
+      to find the user and user agent.
+    explanation: Correct. The metric shows that a client exists but not which one.
+      The audit event holds the caller details.
+  - id: b
+    text: Run `kubectl get pods` and look for pods whose names contain `deprecated`.
+    explanation: Pod names carry no information about API usage.
+  - id: c
+    text: Check only the manifests in the repository, because the cluster cannot show
+      requests.
+    explanation: Controllers and scripts in the cluster can call old versions without
+      a manifest. The metric and audit log expose them.
+  - id: d
+    text: Restart the API server and wait for an empty metric.
+    explanation: The metric resets on a restart, so an empty result proves nothing.
+  correct_option: a
+  explanation: 'The metric reports that deprecated requests happened. The audit log
+    annotation `k8s.io/deprecated: "true"` identifies the caller.'
+- id: ats028-010-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Convert a legacy Ingress to the supported schema
+  source_readings:
+  - sections/section-010/module-03/course-01-migrating-ingress-and-cronjob-definitions.md
+  prompt: 'A legacy Ingress uses `serviceName`, `servicePort`, no `pathType` and the
+    annotation `kubernetes.io/ingress.class: nginx`. Which change list produces a
+    correct `networking.k8s.io/v1` definition?'
+  options:
+  - id: a
+    text: Rename the version only; the fields stay the same.
+    explanation: The backend fields, the path type and the class field all changed.
+      A version rename is not enough.
+  - id: b
+    text: Keep the annotation and add `ingressClassName` with a different class so
+      both are present.
+    explanation: Keeping both fields is a pitfall. Use the field and remove the annotation.
+  - id: c
+    text: Keep `serviceName` and add `pathType`, because the backend fields are unchanged.
+    explanation: The backend moved to the `service` object in the supported version.
+  - id: d
+    text: Use `service.name` and `service.port.number`, add a `pathType` to every
+      path, and set `spec.ingressClassName` instead of the annotation.
+    explanation: Correct. These are the three schema differences between the old and
+      the supported Ingress.
+  correct_option: d
+  explanation: The supported Ingress uses `service.name` and `service.port.number`,
+    requires `pathType`, and selects the controller with `spec.ingressClassName`.
+- id: ats028-010-q08
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Name the supported version of the CronJob
+  source_readings:
+  - sections/section-010/module-03/course-01-migrating-ingress-and-cronjob-definitions.md
+  prompt: 'A CronJob manifest uses `apiVersion: batch/v1beta1`. Which statement is
+    correct for a current cluster?'
+  options:
+  - id: a
+    text: The supported version is `apps/v1`, because CronJob belongs to the apps
+      group.
+    explanation: CronJob belongs to the `batch` group.
+  - id: b
+    text: "`batch/v1beta1` is still served, but only for read requests."
+    explanation: A removed version is not served for any verb.
+  - id: c
+    text: The CronJob kind was replaced by the Job kind, and a schedule field must
+      be dropped.
+    explanation: The CronJob kind still exists in `batch/v1` with its schedule.
+  - id: d
+    text: "`batch/v1beta1` was removed, and the supported version is `batch/v1` with
+      the same schedule and history fields."
+    explanation: Correct. The fields `schedule`, `concurrencyPolicy`, `jobTemplate`
+      and the history limits are the same, so the migration is the version line.
+  correct_option: d
+  explanation: CronJob is served by `batch/v1`. The schema fields stay the same, so
+    only the version line changes.
+- id: ats028-010-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Migrate a HorizontalPodAutoscaler CPU target to autoscaling/v2
+  source_readings:
+  - sections/section-010/module-03/course-02-migrating-horizontalpodautoscaler-and-poddisruptionbudget-definitions.md
+  prompt: 'An old HorizontalPodAutoscaler defines the CPU target as `targetAverageUtilization:
+    60`. How does the same target look in `autoscaling/v2`?'
+  options:
+  - id: a
+    text: "`target: {type: Utilization, averageUtilization: 60}` inside the `resource`
+      metric."
+    explanation: Correct. The target is an object with a `type`, and the number moves
+      into a field named after the type.
+  - id: b
+    text: "`targetAverageUtilization: 60` stays unchanged inside the `resource` metric."
+    explanation: The old field name is not valid in `autoscaling/v2`.
+  - id: c
+    text: "`replicas: 60` on the scale target."
+    explanation: The target is a metric value, not a replica count.
+  - id: d
+    text: "`cpu: 60%` as a top-level field of the spec."
+    explanation: There is no such top-level field. Metrics are a list of typed entries.
+  correct_option: a
+  explanation: In `autoscaling/v2` each resource metric has a `target` object with
+    `type` and, for `Utilization`, `averageUtilization`.
+- id: ats028-010-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Anticipate the changed meaning of an empty PodDisruptionBudget
+    selector
+  source_readings:
+  - sections/section-010/module-03/course-02-migrating-horizontalpodautoscaler-and-poddisruptionbudget-definitions.md
+  prompt: 'A PodDisruptionBudget in `policy/v1beta1` has `selector: {}` and protects
+    no pods. You change only the version line to `policy/v1` and apply it. What is
+    the effect?'
+  options:
+  - id: a
+    text: Nothing changes, because the behavior of an empty selector is the same in
+      both versions.
+    explanation: The meaning changed between the two versions.
+  - id: b
+    text: The object is rejected because an empty selector is no longer allowed.
+    explanation: The empty selector is accepted, with a different meaning.
+  - id: c
+    text: The budget now selects every pod in the namespace, so it can block voluntary
+      disruptions of pods it never covered before.
+    explanation: Correct. In `policy/v1` an empty selector selects every pod in the
+      namespace. Write `matchLabels` explicitly.
+  - id: d
+    text: The budget selects only the pods that have no labels.
+    explanation: An empty selector matches all pods, not only the unlabeled ones.
+  correct_option: c
+  explanation: In `policy/v1` an empty selector selects every pod of the namespace,
+    so a version-only change can alter which pods are protected.

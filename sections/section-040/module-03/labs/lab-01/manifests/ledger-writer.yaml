@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ledger-writer
+  namespace: starfleet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ledger-writer
+  template:
+    metadata:
+      labels:
+        app: ledger-writer
+    spec:
+      containers:
+        - name: writer
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'mkdir -p /var/log/app; while true; do echo "$(date +%T) ledger-event id=$RANDOM" >> /var/log/app/app.log; sleep 2; done'

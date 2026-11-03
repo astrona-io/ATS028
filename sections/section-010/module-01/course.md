@@ -7,18 +7,18 @@ exam_objectives:
 
 An old Deployment definition fails after a cluster upgrade, while the running application still exists. The failed submission and the stored workload describe different things. Discover the served interface before deciding that the application was deleted.
 
-## Learning Goals
+## Learning objectives
 
 - Distinguish deprecation from endpoint removal.
 - Discover served groups, versions and resources.
 - Preserve behavior while changing a resource schema.
 - Distinguish API support, validation and permission errors.
 
-## Before You Start
+## Before you start
 
 Use the module playground for guided practice. It provides an isolated kind cluster and the declared starting fixtures. You need the Astrona command-line tool, kubectl and a working Podman engine; selected exercises also use Helm, curl or OpenSSL. Keep the module's private kubeconfig selected when running application commands.
 
-## Reading Order
+## Reading order
 
 1. Recognizing Deprecated APIs And Migrating Definitions
 2. Discover A Served API And Reject A Removed Definition

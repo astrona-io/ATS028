@@ -1,0 +1,52 @@
+# __CODE__ and __KEY__ are replaced by the seed script with random values.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ledger
+  namespace: starfleet
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ledger
+  template:
+    metadata:
+      labels:
+        app: ledger
+    spec:
+      containers:
+        - name: api
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'i=0; while true; do i=$((i+1)); echo "api request=$i status=200"; sleep 2; done'
+        - name: audit
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'i=0; while true; do i=$((i+1)); echo "audit entry=$i ok"; if [ $((i % 3)) -eq 0 ]; then echo "audit ERROR code=__CODE__ entry=$i"; fi; sleep 2; done'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fuse
+  namespace: starfleet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fuse
+  template:
+    metadata:
+      labels:
+        app: fuse
+    spec:
+      containers:
+        - name: app
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - 'echo "boot step=1 starting"; echo "fatal: environment variable __KEY__ is not set" >&2; exit 1'

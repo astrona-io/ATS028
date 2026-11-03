@@ -1,0 +1,281 @@
+# Knowledge check for section 020. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats028-020
+course_id: ATS028
+exam_code: CKAD
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-020
+  title: 'Application Observability And Maintenance: Probes And Health Checks'
+questions:
+- id: ats028-020-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose the probe type that matches the recovery action
+  source_readings:
+  - sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
+  prompt: A web application sometimes needs a minute of heavy work after a request
+    spike and cannot answer requests during that minute. You want Services to stop
+    sending traffic to a pod during that time, but you do not want the container restarted.
+    Which probe fits?
+  options:
+  - id: a
+    text: A `livenessProbe` on the application port.
+    explanation: A failing liveness probe restarts the container, which is the action
+      you do not want.
+  - id: b
+    text: A `startupProbe` on the application port.
+    explanation: A startup probe guards only the start of the container. It does not
+      run again later.
+  - id: c
+    text: A `readinessProbe` on a path that fails while the application is busy.
+    explanation: Correct. A failing readiness probe removes the pod from Service endpoints
+      and leaves the container running.
+  - id: d
+    text: No probe, and a lower `replicas` value.
+    explanation: Without a probe, Kubernetes keeps sending traffic to the pod.
+  correct_option: c
+  explanation: Readiness controls whether the pod receives traffic. Liveness restarts
+    the container. The startup probe covers the start phase.
+- id: ats028-020-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Describe what a failing liveness probe does
+  source_readings:
+  - sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
+  prompt: The liveness probe of a container fails `failureThreshold` times in a row.
+    What happens?
+  options:
+  - id: a
+    text: The kubelet kills the container and applies the pod `restartPolicy`, which
+      normally restarts it.
+    explanation: Correct. A liveness failure is a restart signal.
+  - id: b
+    text: The pod IP address is removed from the Service endpoints, and the container
+      keeps running.
+    explanation: This describes a readiness failure.
+  - id: c
+    text: The Deployment is scaled down by one replica.
+    explanation: Probes do not change the replica count.
+  - id: d
+    text: The node is cordoned until the container is healthy again.
+    explanation: Probes act on one container. They do not change the node.
+  correct_option: a
+  explanation: A liveness failure makes the kubelet kill the container and restart
+    it according to the `restartPolicy`.
+- id: ats028-020-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Interpret the success rule of an HTTP probe
+  source_readings:
+  - sections/section-020/module-02/course-01-http-and-tcp-probes.md
+  prompt: An `httpGet` probe targets `/ready`. The application answers `302 Found`
+    with a `Location` header to another path. How does the probe treat the response?
+  options:
+  - id: a
+    text: As a failure, because only status 200 passes.
+    explanation: The rule is wider than status 200.
+  - id: b
+    text: As a success, because any status code of at least 200 and below 400 passes.
+    explanation: Correct. A status from 200 to 399 counts as success.
+  - id: c
+    text: As a failure, because the probe follows the redirect and the next response
+      is a 404.
+    explanation: The status 302 itself is in the success range, so the probe counts
+      it as a success.
+  - id: d
+    text: As a success only when the `Location` header names the same host.
+    explanation: The probe does not compare headers to decide success.
+  correct_option: b
+  explanation: An `httpGet` probe succeeds when the response status is at least 200
+    and below 400.
+- id: ats028-020-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Tell a wrong HTTP path from a wrong port in the events
+  source_readings:
+  - sections/section-020/module-02/course-01-http-and-tcp-probes.md
+  prompt: 'A readiness probe event says `connection refused`, while another pod shows
+    an event with `HTTP probe failed with statuscode: 404`. What do the two events
+    tell you?'
+  options:
+  - id: a
+    text: Both events mean the application crashed.
+    explanation: A 404 means the application answered, so it is running.
+  - id: b
+    text: Both events mean the probe `timeoutSeconds` is too short.
+    explanation: A timeout produces a different message about the deadline being exceeded.
+  - id: c
+    text: The first points to a missing path, and the second to a wrong port.
+    explanation: The meanings are reversed.
+  - id: d
+    text: The first points to a probe port that nothing listens on, and the second
+      to a path that the application does not serve.
+    explanation: Correct. A refused connection is a port problem, and a 404 is a path
+      problem on a running application.
+  correct_option: d
+  explanation: "`connection refused` means no listener on the port. A 404 status means
+    the application is up and the path is wrong."
+- id: ats028-020-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Choose the exec handler for a check that is not a network request
+  source_readings:
+  - sections/section-020/module-02/course-02-exec-and-grpc-probes.md
+  prompt: A worker process writes a heartbeat file every few seconds and exposes no
+    port. You want the kubelet to restart it when the file becomes older than a minute.
+    Which handler fits?
+  options:
+  - id: a
+    text: "`httpGet` on port 80."
+    explanation: The worker exposes no port, so nothing answers.
+  - id: b
+    text: "`tcpSocket` on port 22."
+    explanation: The worker has no listener to test.
+  - id: c
+    text: "`grpc` with the empty service name."
+    explanation: A gRPC probe needs a gRPC health service.
+  - id: d
+    text: "`exec` with a command that exits with code 0 only when the file is recent."
+    explanation: Correct. The `exec` handler runs a command in the container, and
+      the exit code decides the result.
+  correct_option: d
+  explanation: The `exec` handler judges only the exit code of a command that runs
+    inside the container.
+- id: ats028-020-q06
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Know the limits of the grpc handler
+  source_readings:
+  - sections/section-020/module-02/course-02-exec-and-grpc-probes.md
+  prompt: 'A service speaks gRPC on port 9000 and registers the standard health service.
+    You add a `grpc` probe with `port: 9000`. Which statement about the handler is
+    correct?'
+  options:
+  - id: a
+    text: The kubelet calls the `Check` method of the health service and treats the
+      status `SERVING` as success.
+    explanation: Correct. This is how the built-in probe decides, and the service
+      name is optional.
+  - id: b
+    text: The port can be given as the name of a container port.
+    explanation: The `grpc` handler accepts a number only.
+  - id: c
+    text: The probe can send an authorization header from a Secret.
+    explanation: The handler cannot send metadata or custom headers.
+  - id: d
+    text: The probe works without a health service because the server answers any
+      call.
+    explanation: A server without the health service answers with `Unimplemented`,
+      and the probe fails.
+  correct_option: a
+  explanation: The `grpc` probe uses the gRPC health protocol with a numeric port
+    and without TLS or metadata.
+- id: ats028-020-q07
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Use the default timing fields
+  source_readings:
+  - sections/section-020/module-03/course-01-probe-timing-fields.md
+  prompt: A probe sets only the handler and no timing fields. How often does the kubelet
+    run it, and how long does it wait for one attempt?
+  options:
+  - id: a
+    text: Every second, and it waits 10 seconds.
+    explanation: The values are swapped.
+  - id: b
+    text: Every 30 seconds, and it waits 5 seconds.
+    explanation: These are not the defaults.
+  - id: c
+    text: Every 10 seconds, and it waits 1 second.
+    explanation: 'Correct. The defaults are `periodSeconds: 10` and `timeoutSeconds:
+      1`.'
+  - id: d
+    text: Only once, after the container is ready.
+    explanation: Probes repeat for the life of the container.
+  correct_option: c
+  explanation: 'The defaults are `periodSeconds: 10`, `timeoutSeconds: 1`, `failureThreshold:
+    3` and `successThreshold: 1`.'
+- id: ats028-020-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Reject a configuration that the API server does not accept
+  source_readings:
+  - sections/section-020/module-03/course-01-probe-timing-fields.md
+  prompt: 'You set `successThreshold: 3` on a `livenessProbe`, to avoid a restart
+    after one good answer. What happens when you apply the manifest?'
+  options:
+  - id: a
+    text: The API server rejects it, because `successThreshold` must be 1 for liveness
+      and startup probes.
+    explanation: Correct. Only readiness probes may use a higher value.
+  - id: b
+    text: The probe needs 3 successes to start, and the container restarts at once.
+    explanation: The manifest does not reach this point.
+  - id: c
+    text: The value is changed to 1 without a message.
+    explanation: The API server rejects the value, not rewrites it.
+  - id: d
+    text: It works, and the container restarts after 3 failures.
+    explanation: The value does not change the failure rule.
+  correct_option: a
+  explanation: "`successThreshold` must be 1 for liveness and startup probes. A readiness
+    probe can use a larger value."
+- id: ats028-020-q09
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Size a startup probe for a slow application
+  source_readings:
+  - sections/section-020/module-03/course-02-startup-probes.md
+  prompt: An application needs up to 45 seconds to listen on its port, and a liveness
+    probe that must detect a real hang within 15 seconds is already in place. Which
+    fix keeps both goals?
+  options:
+  - id: a
+    text: Raise `initialDelaySeconds` of the liveness probe to 60 seconds.
+    explanation: A real hang later is then detected only after the long delay, which
+      is what the liveness probe must avoid.
+  - id: b
+    text: Remove the liveness probe.
+    explanation: The application would then no longer be restarted when it hangs.
+  - id: c
+    text: 'Add a startup probe with `periodSeconds: 5` and `failureThreshold: 24`
+      on the application port and keep the liveness settings.'
+    explanation: Correct. The startup budget is 5 x 24 = 120 seconds. Liveness and
+      readiness probes begin only after the startup probe succeeds.
+  - id: d
+    text: 'Set `successThreshold: 5` on the startup probe.'
+    explanation: A startup probe must have `successThreshold` 1.
+  correct_option: c
+  explanation: A startup probe has its own budget of `failureThreshold` times `periodSeconds`,
+    and it holds back the other probes until it succeeds.
+- id: ats028-020-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain the readiness effect on Services
+  source_readings:
+  - sections/section-020/module-03/course-01-probe-timing-fields.md
+  prompt: All pods of a Deployment fail their readiness probe at the same time. What
+    does a client of the Service see?
+  options:
+  - id: a
+    text: The Service sends requests to the pods anyway, because Services ignore readiness.
+    explanation: Services use only ready pods.
+  - id: b
+    text: The pods are restarted, and the Service answers after the restart.
+    explanation: A readiness failure does not restart a container.
+  - id: c
+    text: The Service has no ready endpoints, so requests to it fail until a pod becomes
+      ready again.
+    explanation: Correct. The pod IP addresses are removed from the EndpointSlices,
+      and the containers keep running.
+  - id: d
+    text: The Deployment creates new pods with a different image.
+    explanation: A failing probe does not change the template.
+  correct_option: c
+  explanation: A failed readiness probe removes the pod from the EndpointSlices of
+    its Services. With no ready pod, the Service has no endpoints.

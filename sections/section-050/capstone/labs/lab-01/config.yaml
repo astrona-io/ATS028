@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://cli.astrona.io/schema/lab-config.schema.json
+#
+# Debugging in Kubernetes Capstone (LAB). Graded against the live cluster.
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-028-capstone-050
+  docs:
+    prerequisites: prerequisites.md
+    question: question.md
+    solution: solution.md
+
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    preloadImages:
+      - docker.io/library/python:3.13-alpine
+      - docker.io/library/busybox:1.37.0
+
+# The faults are left in place on purpose.
+bootstrap:
+  init:
+    - name: seed-cluster
+      description: Create the workloads and the faults
+      type: file
+      source: bootstrap/01-seed-cluster.sh
+
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+    - name: apply-solution
+      description: Apply the reference solution
+      type: file
+      source: solution/apply.sh
+
+validation:
+  scripts:
+    - name: hail-serving
+      description: A request from shuttle to http://hail succeeds and hail has 2 ready replicas
+      type: file
+      source: validation/validate-hail-serving.sh
+      hint: The Service has no endpoints. Read the Unhealthy events and compare the readiness probe port with the port the application listens on.
+    - name: hail-probe-kept
+      description: hail keeps an HTTP readiness probe
+      type: file
+      source: validation/validate-hail-probe-kept.sh
+      hint: Correct the probe; do not remove it.
+    - name: dock-running
+      description: dock runs with an image that can be pulled
+      type: file
+      source: validation/validate-dock-running.sh
+      hint: Read the pull error in the pod events and set a valid tag.
+    - name: beacon-findings
+      description: The ConfigMap capstone-report holds the BUILD_ID and the listening port of the beacon pod
+      type: file
+      source: validation/validate-beacon-findings.sh
+      hint: Read both from inside the container with kubectl exec.
+    - name: beacon-inspected
+      description: The pod beacon has an ephemeral container named inspector and is the original pod
+      type: file
+      source: validation/validate-beacon-inspected.sh
+      hint: Use kubectl debug with --target=app. Do not recreate the pod.
+    - name: causes-recorded
+      description: The ConfigMap capstone-report names the cause of the hail and dock faults
+      type: file
+      source: validation/validate-causes-recorded.sh
+      hint: Record the event reason or the waiting reason before you fix each fault.
+
+teardown:
+  keepCluster: false
