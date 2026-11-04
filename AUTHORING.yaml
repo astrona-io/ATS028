@@ -54,7 +54,7 @@ sections:
       after_reading: sections/section-010/module-01/course-01-recognizing-deprecated-apis-and-migrating-definitions.md
       objective: Apply a supported Deployment API with a matching selector and preserved
         application behavior.
-      status: draft
+      status: alpha
       runtime_verification: pending
 - id: section-020
   title: Implement probes and health checks
@@ -86,14 +86,14 @@ sections:
       path: sections/section-020/module-01/labs/lab-01
       after_reading: sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
       objective: Restore endpoint eligibility by repairing a readiness probe port.
-      status: draft
+      status: alpha
       runtime_verification: pending
     - id: lab-02
       path: sections/section-020/module-01/labs/lab-02
       after_reading: sections/section-020/module-01/course-01-designing-startup-readiness-and-liveness-checks.md
       objective: Restore a valid health check while retaining restart protection and
         readiness.
-      status: draft
+      status: alpha
       runtime_verification: pending
 - id: section-030
   title: Use built-in CLI tools to monitor Kubernetes applications
@@ -125,7 +125,7 @@ sections:
       path: sections/section-030/module-01/labs/lab-01
       after_reading: sections/section-030/module-01/course-01-choosing-diagnostic-evidence-with-kubectl.md
       objective: Combine ready workload state with a recent metrics API measurement.
-      status: draft
+      status: alpha
       runtime_verification: pending
 - id: section-040
   title: Utilize container logs
@@ -161,7 +161,7 @@ sections:
       after_reading: sections/section-040/module-01/course-02-selecting-the-right-container-log-and-time-window.md
       objective: Select the previous container log and record the corresponding exit
         evidence.
-      status: draft
+      status: alpha
       runtime_verification: pending
 - id: section-050
   title: Debugging in Kubernetes
@@ -197,7 +197,7 @@ sections:
       after_reading: sections/section-050/module-01/course-01-placement-and-dependency-evidence.md
       objective: Use node labels and scheduling evidence to correct an unsatisfiable
         placement rule.
-      status: draft
+      status: alpha
       runtime_verification: pending
   - id: module-02
     title: Application Dependencies And Focused Correction
@@ -226,6 +226,6 @@ sections:
       path: sections/section-050/module-02/labs/lab-01
       objective: Diagnose a blocked container and restore its required configuration
         without changing the Deployment.
-      status: draft
+      status: alpha
       runtime_verification: pending
       after_reading: sections/section-050/module-02/course-01-configuration-dependencies-and-request-failures.md
