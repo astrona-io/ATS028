@@ -89,7 +89,7 @@ modules:
     path: sections/section-010/module-02/labs/lab-01
     difficulty: intermediate
     estimated_duration: 25m
-    topic: migrate-role-rolebinding-and-priorityclass-definitions
+    topic: rbac-and-priority-apis
     task_kind: troubleshooting
     learning_goals:
     - 'Complete the task: Migrate Role, RoleBinding And PriorityClass Definitions.'
@@ -121,7 +121,7 @@ modules:
     path: sections/section-010/module-03/labs/lab-01
     difficulty: intermediate
     estimated_duration: 25m
-    topic: migrate-ingress-cronjob-horizontalpodautoscaler-and-poddisruptionbudget
+    topic: workload-api-versions
     task_kind: troubleshooting
     learning_goals:
     - 'Complete the task: Migrate Ingress, CronJob, HorizontalPodAutoscaler And PodDisruptionBudget.'
@@ -352,7 +352,7 @@ modules:
     path: sections/section-030/module-02/labs/lab-01
     difficulty: intermediate
     estimated_duration: 25m
-    topic: select-workloads-and-record-what-you-find
+    topic: label-selectors
     task_kind: troubleshooting
     learning_goals:
     - 'Complete the task: Select Workloads And Record What You Find.'
@@ -476,7 +476,7 @@ modules:
     path: sections/section-040/module-02/labs/lab-01
     difficulty: intermediate
     estimated_duration: 25m
-    topic: read-logs-from-multi-container-and-crashing-pods
+    topic: container-logs
     task_kind: troubleshooting
     learning_goals:
     - 'Complete the task: Read Logs From Multi-Container And Crashing Pods.'
@@ -506,7 +506,7 @@ modules:
     path: sections/section-040/module-03/labs/lab-01
     difficulty: intermediate
     estimated_duration: 25m
-    topic: ship-a-file-log-to-standard-output-with-a-sidecar
+    topic: sidecar-logging
     task_kind: troubleshooting
     learning_goals:
     - 'Complete the task: Ship A File Log To Standard Output With A Sidecar.'
@@ -634,7 +634,7 @@ modules:
     path: sections/section-050/module-03/labs/lab-01
     difficulty: intermediate
     estimated_duration: 25m
-    topic: inspect-a-running-pod-and-correct-its-service
+    topic: service-debugging
     task_kind: troubleshooting
     learning_goals:
     - 'Complete the task: Inspect A Running Pod And Correct Its Service.'
@@ -664,7 +664,7 @@ modules:
     path: sections/section-050/module-04/labs/lab-01
     difficulty: intermediate
     estimated_duration: 25m
-    topic: diagnose-and-repair-five-failing-workloads
+    topic: workload-debugging
     task_kind: troubleshooting
     learning_goals:
     - 'Complete the task: Diagnose And Repair Five Failing Workloads.'
