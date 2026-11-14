@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://astrona.io/courses/certified-kubernetes-application-developer-ckad">
+    <img src="https://astrona.io/courses/certified-kubernetes-application-developer-ckad/domains/ATS028.svg" alt="ATS028: Application Observability and Maintenance, part of the Certified Kubernetes Application Developer course on Astrona" width="100%">
+  </a>
+</p>
+
 # Application Observability and Maintenance (ATS028)
 
 Certified Kubernetes Application Developer (CKAD): Application Observability and Maintenance, worth 15% of the curriculum and part of ATP006.
